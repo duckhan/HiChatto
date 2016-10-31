@@ -31,9 +31,5 @@ namespace HiChatto.Universal
         {
 
         }
-        private async string FindServer()
-        {
-
-        }
     }
 }
