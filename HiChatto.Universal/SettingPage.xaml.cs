@@ -20,20 +20,11 @@ namespace HiChatto.Universal
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class MainPage : Page
+    public sealed partial class SettingPage : Page
     {
-        public MainPage()
+        public SettingPage()
         {
             this.InitializeComponent();
-        }
-
-        private void btnFindServer_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-        private async string FindServer()
-        {
-
         }
     }
 }
