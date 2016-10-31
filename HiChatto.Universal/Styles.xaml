@@ -30,11 +30,11 @@
     </Style>
     <Style x:Key="TextBlockLargeFontSize" TargetType="TextBlock">
         <Setter Property="FontSize"
-                Value="30" />
+                Value="24" />
     </Style>
     <Style x:Key="TextBoxLargeFontSize"
            TargetType="TextBox">
         <Setter Property="FontSize"
-                Value="30" />
+                Value="24" />
     </Style>
 </ResourceDictionary>

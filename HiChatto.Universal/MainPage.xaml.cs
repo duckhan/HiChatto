@@ -5,6 +5,9 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Networking;
+using Windows.Networking.Connectivity;
+using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -22,14 +25,46 @@ namespace HiChatto.Universal
     /// </summary>
     public sealed partial class MainPage : Page
     {
+        UniversalConfig config;
         public MainPage()
         {
             this.InitializeComponent();
         }
 
-        private void btnFindServer_Click(object sender, RoutedEventArgs e)
-        {
 
+        private async void btnConnect_Click(object sender, RoutedEventArgs e)
+        {
+            config.UserName = txtDisplayName.Text;
+            config.ServerIP = txtIP.Text;
+            config.Save();
+        }
+        string GetDeviceName()
+        {
+            var info = new Windows.Security.ExchangeActiveSyncProvisioning.EasClientDeviceInformation();
+            return info.FriendlyName;
+        }
+        HostName GetHostName()
+        {
+            var hostnames = NetworkInformation.GetHostNames();
+            foreach (var item in hostnames)
+            {
+                if (item.Type == HostNameType.Ipv4)
+                {
+                    return item;
+                }
+            }
+            return null;
+        }
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
+           config = new UniversalConfig();
+            if (string.IsNullOrEmpty(config.UserName))
+            {
+                config.UserName = GetHostName().DisplayName;
+            }
+            txtDisplayName.Text = config.UserName;
+            txtIP.Text = config.ServerIP;
+            base.OnNavigatedTo(e);
         }
     }
 }

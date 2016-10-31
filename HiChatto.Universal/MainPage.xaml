@@ -19,19 +19,29 @@
                         Margin="20 0 20 0"
                         VerticalAlignment="Center">
                 <StackPanel Orientation="Horizontal"
+                            Margin="0 20 0 20">
+                    <TextBlock Text="Display Name: " 
+                               Style="{StaticResource TextBlockLargeFontSize}"/>
+                    <TextBox Name="txtDisplayName"
+                             Margin="10 0 0 0"
+                             MinWidth="150"
+                             Style="{StaticResource TextBoxLargeFontSize}" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal"
                             HorizontalAlignment="Stretch">
                     <TextBlock Text="IP: "
                                Margin="0,0,20,0"
                                Style="{StaticResource TextBlockLargeFontSize}"/>
                     <TextBox Name="txtIP"
+                             MinWidth="200"
                              HorizontalAlignment="Stretch"
                              Style="{StaticResource TextBoxLargeFontSize}"
                              Text="192.168.1.10" />
                 </StackPanel>
                 <Button Content="Connect"
                         Margin="0 20 0 0"
-                        Name="btnFindServer"
-                        Click="btnFindServer_Click"
+                        Name="btnConnect"
+                        Click="btnConnect_Click"
                         HorizontalAlignment="Stretch"
                         VerticalAlignment="Center"
                         Style="{StaticResource DefaultLargeButtonStyle}" />

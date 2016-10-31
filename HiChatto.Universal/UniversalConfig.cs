@@ -16,35 +16,46 @@ namespace HiChatto.Universal
     {   
         public string ServerIP { get; set; }
         [ConfigProperty("ServerPort",6969)]
-        public string ServerPort { get; set; }
+        public int ServerPort { get; set; }
         public string UserName { get; set; }
+        public UniversalConfig()
+        {
+            Load(typeof(UniversalConfig));
+        }
         protected async override void Load(Type type)
         {
             StorageFolder localFolder = ApplicationData.Current.LocalFolder;
-            StorageFile settingFile = await localFolder.GetFileAsync("setting.json");
-            if (settingFile == null)
-            {
-                LoadDefaultProperties(type);
-            }
-            else
-            {
+            try
+            { 
+                StorageFile settingFile = await localFolder.GetFileAsync("setting.json");
                 string data = File.ReadAllText(settingFile.Path);
                 UniversalConfig config = JsonConvert.DeserializeObject<UniversalConfig>(data);
                 ServerIP = config.ServerIP;
                 ServerPort = config.ServerPort;
                 UserName = config.UserName;
             }
+            catch
+            {
+                LoadDefaultProperties(type);
+            }
         }
         private void LoadDefaultProperties(Type type)
         {
-            foreach (var item in type.GetFields())
+            foreach (var item in type.GetProperties())
             {
                 ConfigPropertyAttribute[] attr = (ConfigPropertyAttribute[])item.GetCustomAttributes(typeof(ConfigPropertyAttribute),false);
                 if (attr.Length>0)
                 {
-                    item.SetValue(attr[0].Key, attr[0].Value);
+                    item.SetValue(this, attr[0].Value);
                 }
             }
+        }
+        public async void Save()
+        {
+            StorageFolder localFolder = ApplicationData.Current.LocalFolder;
+            StorageFile settingFile = await localFolder.CreateFileAsync("setting.json",CreationCollisionOption.ReplaceExisting);
+            string data = JsonConvert.SerializeObject(this);
+            File.WriteAllText(settingFile.Path, data);
         }
     }
 }
