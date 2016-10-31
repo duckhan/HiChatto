@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HiChatto.Universal", "HiCha
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HiChatto.Base", "HiChatto.Base\HiChatto.Base.csproj", "{5505B626-86F5-4802-96E7-7A6534FD30C5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Models", "Models\Models.csproj", "{BBB268E0-9B41-46D9-9918-65A055F5485F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HiChatto.Models", "Models\HiChatto.Models.csproj", "{BBB268E0-9B41-46D9-9918-65A055F5485F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
