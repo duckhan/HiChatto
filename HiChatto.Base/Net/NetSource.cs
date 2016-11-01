@@ -44,7 +44,7 @@ namespace HiChatto.Base.Net
             catch (Exception ex)
             {
 
-                throw;
+                throw ex;
             }
         }
         protected abstract void LoadPackageHandler();

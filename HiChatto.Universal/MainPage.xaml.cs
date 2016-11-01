@@ -1,4 +1,5 @@
-﻿using System;
+﻿using HiChatto.Universal.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -25,18 +26,15 @@ namespace HiChatto.Universal
     /// </summary>
     public sealed partial class MainPage : Page
     {
-        UniversalConfig config;
-        public MainPage()
+        public MainPage(StartViewModel viewModel)
         {
             this.InitializeComponent();
+           DataContext = viewModel;
         }
+       // public StartViewModel ViewModel { get; set; }
 
-
-        private async void btnConnect_Click(object sender, RoutedEventArgs e)
+        private void btnConnect_Click(object sender, RoutedEventArgs e)
         {
-            config.UserName = txtDisplayName.Text;
-            config.ServerIP = txtIP.Text;
-            config.Save();
         }
         string GetDeviceName()
         {
@@ -55,16 +53,6 @@ namespace HiChatto.Universal
             }
             return null;
         }
-        protected override void OnNavigatedTo(NavigationEventArgs e)
-        {
-           config = new UniversalConfig();
-            if (string.IsNullOrEmpty(config.UserName))
-            {
-                config.UserName = GetHostName().DisplayName;
-            }
-            txtDisplayName.Text = config.UserName;
-            txtIP.Text = config.ServerIP;
-            base.OnNavigatedTo(e);
-        }
+
     }
 }

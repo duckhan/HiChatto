@@ -1,20 +1,23 @@
-﻿<Page
-    x:Class="HiChatto.Universal.MainPage"
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:HiChatto.Universal"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d">
+﻿<Page x:Class="HiChatto.Universal.MainPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:local="using:HiChatto.Universal"
+      xmlns:viewModels="using:HiChatto.Universal.ViewModels"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      mc:Ignorable="d"
+      d:DataContext="{d:DesignInstance Type=viewModels:StartViewModel}">
     <Page.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="Styles.xaml" />
             </ResourceDictionary.MergedDictionaries>
+            <viewModels:BoolToVisibilityConverter x:Key="boolToVisibilityConverter" />
         </ResourceDictionary>
     </Page.Resources>
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Grid>
+            
             <StackPanel Orientation="Vertical"
                         Margin="20 0 20 0"
                         VerticalAlignment="Center">
@@ -23,6 +26,7 @@
                     <TextBlock Text="Display Name: " 
                                Style="{StaticResource TextBlockLargeFontSize}"/>
                     <TextBox Name="txtDisplayName"
+                             Text="{Binding Config.UserName,Mode=TwoWay}"
                              Margin="10 0 0 0"
                              MinWidth="150"
                              Style="{StaticResource TextBoxLargeFontSize}" />
@@ -30,21 +34,29 @@
                 <StackPanel Orientation="Horizontal"
                             HorizontalAlignment="Stretch">
                     <TextBlock Text="IP: "
-                               Margin="0,0,20,0"
+                               Margin="0,0,20,0"                               
                                Style="{StaticResource TextBlockLargeFontSize}"/>
                     <TextBox Name="txtIP"
+                             Text="{Binding Config.ServerIP,Mode=TwoWay}"
                              MinWidth="200"
                              HorizontalAlignment="Stretch"
                              Style="{StaticResource TextBoxLargeFontSize}"
-                             Text="192.168.1.10" />
+/>
                 </StackPanel>
+                <Button Content="Save"
+                        HorizontalAlignment="Stretch"
+                        Margin="0 20 0 0"
+                        Style="{StaticResource PrimaryLargeButtonStyle}"
+                        Command="{Binding SaveConfigCommand}"
+                       />
                 <Button Content="Connect"
+                        IsEnabled="{Binding IsConnectable}"
                         Margin="0 20 0 0"
                         Name="btnConnect"
-                        Click="btnConnect_Click"
+                        Command="{Binding ConnectCommand}"
                         HorizontalAlignment="Stretch"
                         VerticalAlignment="Center"
-                        Style="{StaticResource DefaultLargeButtonStyle}" />
+                        Style="{StaticResource PrimaryLargeButtonStyle}" />
             </StackPanel>
         </Grid>
         <ProgressRing Name="ringLoading"
