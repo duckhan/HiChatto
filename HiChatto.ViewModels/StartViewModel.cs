@@ -1,12 +1,10 @@
 ﻿using HiChatto.Base.Net;
-using HiChatto.Universal;
-using HiChatto.Universal.Models;
-using HiChatto.Universal.Net;
-using HiChatto.Universal.ViewModels;
+using HiChatto.Models;
+using HiChatto.Models.ViewModels;
 using System;
 using System.Windows.Input;
 
-namespace HiChatto.Universal.ViewModels
+namespace HiChatto.ViewModels
 {
     public class StartViewModel : ViewModelBase
     {
@@ -57,8 +55,8 @@ namespace HiChatto.Universal.ViewModels
         }
         private void Connect()
         {
-            _client = new Client(new byte[8096], new byte[8096]);
-            //_client.Connect(_config);
+            _client = new UniversalClient(new byte[8096], new byte[8096]);
+            _client.Connect(_config);
             _client.Connected += Client_Connected;
         }
 

@@ -1,12 +1,12 @@
 ﻿using HiChatto.Base.Net;
-using HiChatto.Universal;
-using HiChatto.Universal.Models;
-using HiChatto.Universal.Net;
-using HiChatto.Universal.ViewModels;
+using HiChatto.ClientLib;
+using HiChatto.ClientLib.Models;
+using HiChatto.ClientLib.Net;
+using HiChatto.ClientLib.ViewModels;
 using System;
 using System.Windows.Input;
 
-namespace HiChatto.Universal.ViewModels
+namespace HiChatto.ClientLib.ViewModels
 {
     public class StartViewModel : ViewModelBase
     {

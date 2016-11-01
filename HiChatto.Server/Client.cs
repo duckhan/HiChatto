@@ -8,6 +8,7 @@ using System.Net;
 using HiChatto.Base;
 using HiChatto.Base.Net;
 using System.Reflection;
+using System.Threading;
 
 namespace HiChatto.Server
 {
@@ -42,7 +43,19 @@ namespace HiChatto.Server
                 Console.Write(Helper.ToHexDump(buff));
                 string str = UnicodeEncoding.UTF8.GetString(buff);
                 Console.WriteLine(str);
-                Send(UnicodeEncoding.UTF8.GetBytes("Server: " + str));
+                byte[] send = UnicodeEncoding.UTF8.GetBytes("Server: " + str);
+                byte[] leng = BitConverter.GetBytes(send.Length);
+                byte[] pack = new byte[leng.Length + send.Length];
+                Array.Copy(leng, pack, leng.Length);
+                Array.Copy(send, 0, pack, leng.Length, send.Length);
+                Send(pack);
+                 send = UnicodeEncoding.UTF8.GetBytes("Server 2: " + str);
+                 leng = BitConverter.GetBytes(send.Length);
+                 pack = new byte[leng.Length + send.Length];
+                Array.Copy(leng, pack, leng.Length);
+                Array.Copy(send, 0, pack, leng.Length, send.Length);
+                Thread.Sleep(10000);
+                Send(pack);
                 ImpReceiveAsync(e);
             }
             else

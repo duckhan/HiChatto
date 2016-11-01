@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Data;
 
-namespace HiChatto.Universal.ViewModels
+namespace HiChatto.Models.ViewModels
 {
-    public class BoolToVisibilityConverter : IValueConverter
+    class BoolToVisibilityConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {
