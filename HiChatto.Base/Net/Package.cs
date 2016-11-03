@@ -3,31 +3,95 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Runtime.Serialization;
+using System.IO;
 
 namespace HiChatto.Base.Net
 {
     public class Package
     {
-        public const int DEFAULT_SIZE = 2048;
+        public const int PackageSize = 8096;
         private byte[] _buff;
         protected int _code;
         public int Code
         {
             get { return _code; }
         }
-        public const int HEADER = 696969;
+        public byte[] Buffer
+        {
+            get { return _buff; }
+        }
+        /// <summary>
+        /// Signs of Package in this App
+        /// </summary>
+        public const int Header = 696969;
+        /// <summary>
+        /// The length of Package's header
+        /// Includes:
+        /// 4 bytes Header
+        /// 4 bytes Package's Code
+        /// 4 bytes Client ID
+        /// 4 bytes Package Length
+        /// </summary>
+        public const int HeaderSize = 16;
         protected int _offset;
         protected int _length;
-        public Package(int code, int size)
+        protected int _clientId;
+        public int Length
+        {
+            get { return _length; }
+        }
+        public Package():this(0,0,8096)
+        {
+
+        }
+        public Package(byte[] content)
+        {
+            _buff = content;
+            ReadHeader();
+        }
+        public Package(int clientID,int code, int size)
         {
             _code = code;
             _buff = new byte[size];
             _length = 0;
-            _offset = 0;
+            _offset = HeaderSize;
+            _clientId = clientID;
         }
-        public Package(int code) : this(code, DEFAULT_SIZE)
+        public Package(int code) : this(0,code, PackageSize)
         {
-
+        }
+        public void WriteHeader()
+        {
+            int currentOffset = _offset;
+            _offset = 0;
+            WriteInt(Header);
+            WriteInt(_code);
+            WriteInt(_clientId);
+            WriteInt(_length);
+            _offset = currentOffset;
+        }
+        public bool ReadHeader()
+        {
+            try
+            {
+                int currentOffset = _offset;
+                _offset = 0;
+                int header = ReadInt();
+                if (header != Header)
+                {
+                    _code = 0;
+                    return false;
+                }
+                _code = ReadInt();
+                _clientId = ReadInt();
+                _length = ReadInt();
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
         public void WriteBytes(byte[] buff, int offset, int length)
         {
@@ -83,6 +147,10 @@ namespace HiChatto.Base.Net
                 WriteByte(0);
             }
         }
+        public void ResetOffset()
+        {
+            _offset = HeaderSize;
+        }
         public byte[] ReadBytes(int len)
         {
             byte[] buff = new byte[len];
@@ -117,6 +185,44 @@ namespace HiChatto.Base.Net
             int len = ReadInt();
             byte[] buff = ReadBytes(len);
             return UnicodeEncoding.UTF8.GetString(buff,0,len);
+        }
+        public bool CopyFrom(byte[] buff,int offset,int count)
+        {
+            if (count<=_buff.Length && count - offset <= buff.Length)
+            {
+                Array.Copy(buff, offset, _buff, 0, count);
+                return true;
+            }
+            return false;
+        }
+        public void WriteObject(object obj,Type type)
+        {
+            DataContractSerializer d = new DataContractSerializer(type);
+            MemoryStream ms = new MemoryStream();
+            d.WriteObject(ms, obj);
+            ms.Position = 0;
+            byte[] buff=ms.ToArray();
+            WriteInt(buff.Length);
+            WriteBytes(buff);
+        }
+        public object ReadObject(Type type)
+        {
+            try
+            {
+                int len = ReadInt();
+
+                DataContractSerializer d = new DataContractSerializer(type);
+                MemoryStream ms = new MemoryStream();
+                ms.Write(_buff, _offset, len);
+                ms.Position = 0;
+                object obj = d.ReadObject(ms);
+                return obj;
+            }
+            catch(Exception ex)
+            {
+                return null;
+            }
+           
         }
     }
 }

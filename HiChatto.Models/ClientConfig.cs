@@ -1,8 +1,7 @@
 ﻿using System;
-using Windows.Storage;
 using System.Reflection;
 using System.IO;
-namespace HiChatto.Universal.Models
+namespace HiChatto.Models
 {
     public class ClientConfig
     {   

@@ -27,36 +27,24 @@ namespace HiChatto.Server
             rc_event = new SocketAsyncEventArgs();
             rc_event.SetBuffer(_recieveBuffer, 0, 8096);
             rc_event.Completed += ReceiveAsyncComplete;
-            if (_handlers == null)
-            {
-                LoadPackageHandler();
-            }
+           
+            Received += Client_Received;
+        }
+
+        private void Client_Received(NetSource sender, NetSourceEventArgs e)
+        {
+            Server.Handlers[e.Package.Code]?.Handle(sender, e.Package);
         }
 
         private void ReceiveAsyncComplete(object sender, SocketAsyncEventArgs e)
         {
             if (((Socket)sender).Connected && e.SocketError == SocketError.Success && e.BytesTransferred > 0)
             {
-                byte[] buff = new byte[e.BytesTransferred];
-                Array.Copy(e.Buffer, buff, buff.Length);
-                Console.WriteLine("Recive From {0}:", _socket.RemoteEndPoint.ToString());
-                Console.Write(Helper.ToHexDump(buff));
-                string str = UnicodeEncoding.UTF8.GetString(buff);
-                Console.WriteLine(str);
-                byte[] send = UnicodeEncoding.UTF8.GetBytes("Server: " + str);
-                byte[] leng = BitConverter.GetBytes(send.Length);
-                byte[] pack = new byte[leng.Length + send.Length];
-                Array.Copy(leng, pack, leng.Length);
-                Array.Copy(send, 0, pack, leng.Length, send.Length);
-                Send(pack);
-                 send = UnicodeEncoding.UTF8.GetBytes("Server 2: " + str);
-                 leng = BitConverter.GetBytes(send.Length);
-                 pack = new byte[leng.Length + send.Length];
-                Array.Copy(leng, pack, leng.Length);
-                Array.Copy(send, 0, pack, leng.Length, send.Length);
-                Thread.Sleep(10000);
-                Send(pack);
-                ImpReceiveAsync(e);
+                lock (_recieveBuffer)
+                {
+                    OnRecieve(e.BytesTransferred);
+                    ImpReceiveAsync(e);
+                }
             }
             else
             {
@@ -90,10 +78,7 @@ namespace HiChatto.Server
         {
             id = Server.Clients.Count + 1;
             _socket = sk;
-            if (_connected != null)
-            {
-                _connected(this, EventArgs.Empty);
-            }
+            OnConnect();
         }
         public void ReceiveAsync()
         {
@@ -102,13 +87,12 @@ namespace HiChatto.Server
                 _socket.ReceiveAsync(rc_event);
             }
         }
-        private void Disconnect()
+        public override void Disconnect()
         {
-            if (_disconnected != null)
-            {
-                _disconnected(this, EventArgs.Empty);
-            }
+            _isConnected = false;
             _socket.Dispose();
+            rc_event.Dispose();
+            OnDisconnect();
         }
 
         public override void Send(Package pkg)
@@ -116,21 +100,15 @@ namespace HiChatto.Server
             throw new NotImplementedException();
         }
 
-        protected override void LoadPackageHandler()
-        {
-            _handlers = new IPackageHandler[64];
-            var assembly = Assembly.GetAssembly(typeof(HiChatto.Server.Client));
-            var types = assembly.GetTypes();
-            foreach (var item in types)
-            {
-                if (item.IsClass && item.GetInterface("HiChatto.Base.Net.IPackageHandler") != null)
-                {
-                    PackageHandlerAttribute a = (PackageHandlerAttribute)item.GetCustomAttribute(typeof(PackageHandlerAttribute));
-                    _handlers[0] = (IPackageHandler)Activator.CreateInstance(item);
-                    Console.WriteLine("Found");
 
-                }
-            }
+
+        protected override void SendTCP(int numBytes, Package pkg)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void Connect()
+        {
         }
     }
 }

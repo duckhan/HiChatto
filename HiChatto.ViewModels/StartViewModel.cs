@@ -1,6 +1,6 @@
 ﻿using HiChatto.Base.Net;
 using HiChatto.Models;
-using HiChatto.Models.ViewModels;
+using HiChatto.ViewModels.Command;
 using System;
 using System.Windows.Input;
 
@@ -21,7 +21,7 @@ namespace HiChatto.ViewModels
                 }
             }
         }
-        NetSource _client;
+        NetSource _client=null;
         private bool _IsConnectable = false;
         public bool IsConnectable
         {
@@ -55,9 +55,7 @@ namespace HiChatto.ViewModels
         }
         private void Connect()
         {
-            _client = new UniversalClient(new byte[8096], new byte[8096]);
-            _client.Connect(_config);
-            _client.Connected += Client_Connected;
+         
         }
 
         private void Client_Connected(object sender, EventArgs e)

@@ -1,54 +1,35 @@
 ﻿using HiChatto.Base.Net;
-using HiChatto.Universal.Models;
 using System;
-using System.Threading.Tasks;
 using System.Net.Sockets;
 using System.Net;
-
+using HiChatto.Models;
 namespace HiChatto.Universal.Net
 {
     public class Client : NetSource
     {
         Socket _socket;
-        private bool _isConnected;
+        ClientConfig _config;
+        public ClientConfig Config { get { return _config; } }
+        public Socket Socket { get { return _socket; } }
         public bool IsConnected
         {
             get { return _isConnected; }
         }
         SocketAsyncEventArgs receiveEvent;
-        public Client(byte[] sendBuff, byte[] recieveBuff) : base(sendBuff, recieveBuff)
+        public Client(ClientConfig config) : base(new byte[8096], new byte[8096])
         {
-
+            _config = config;
         }
 
         private void ReceiveAsynCompleted(object sender, SocketAsyncEventArgs e)
         {
-            throw new NotImplementedException();
-        }
-
-        public Task Connect(ClientConfig config)
-        {
-            try
-            {
-                SocketAsyncEventArgs conEv = new SocketAsyncEventArgs();
-                receiveEvent = new SocketAsyncEventArgs();
-                receiveEvent.Completed += ReceiveAsynCompleted;
-                receiveEvent.SetBuffer(_recieveBuffer, 0, _recieveBuffer.Length);
-                conEv.RemoteEndPoint = new IPEndPoint(IPAddress.Parse(config.ServerIP), config.ServerPort);
-                _socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-                _socket.ConnectAsync(conEv);
-                conEv.Completed += ConnectAsyncComplete;             
-            }
-            catch
-            {
-                _isConnected = false;
-            }
-            return null;
+            OnRecieve(e.BytesTransferred);
         }
 
         private void ConnectAsyncComplete(object sender, SocketAsyncEventArgs e)
         {
-            _connected?.Invoke(this, e);
+            _isConnected = true;
+            OnConnect();
         }
 
         public void RecieveAsync()
@@ -59,16 +40,64 @@ namespace HiChatto.Universal.Net
             }
             catch
             {
-                _disconnected?.Invoke(this, EventArgs.Empty);
+                _isConnected = false;
+                Disconnect();
             }
         }
-        public override void Send(Package pkg)
+
+        protected override void SendTCP(int numBytes, Package pkg)
         {
-            throw new NotImplementedException();
+            try
+            {
+                if (_socket != null && _socket.Connected)
+                {
+                    SocketAsyncEventArgs e = new SocketAsyncEventArgs();
+                    e.SetBuffer(_sendBuffer, 0, numBytes);
+                    e.UserToken = pkg;
+                    e.Completed += SendAsyncCompleted;
+                    _socket.SendAsync(e);
+                }
+            }
+            catch
+            {
+                Disconnect();
+            }
         }
-        protected override void LoadPackageHandler()
+        private void SendAsyncCompleted(object sender, SocketAsyncEventArgs e)
         {
-            throw new NotImplementedException();
+            NetSourceEventArgs sentEvent = new NetSourceEventArgs();
+            sentEvent.UserToken = e;
+            OnSent(this, sentEvent);
+        }
+
+        public override void Disconnect()
+        {
+            if (_isConnected)
+            {
+                _isConnected = false;
+                _socket.Dispose();
+                receiveEvent.Dispose();
+                OnDisconnect();
+            }
+        }
+
+        public override void Connect()
+        {
+            try
+            {
+                SocketAsyncEventArgs conEv = new SocketAsyncEventArgs();
+                receiveEvent = new SocketAsyncEventArgs();
+                receiveEvent.Completed += ReceiveAsynCompleted;
+                receiveEvent.SetBuffer(_recieveBuffer, 0, _recieveBuffer.Length);
+                conEv.RemoteEndPoint = new IPEndPoint(IPAddress.Parse(_config.ServerIP), _config.ServerPort);
+                _socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+                conEv.Completed += ConnectAsyncComplete;
+                _socket.ConnectAsync(conEv);
+            }
+            catch
+            {
+                _isConnected = false;
+            }
         }
     }
 }

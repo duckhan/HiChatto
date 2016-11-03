@@ -1,0 +1,8 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:converter="using:HiChatto.Universal.ViewModels.Converter"
+                    xmlns:local="using:HiChatto.Universal.ViewModels">
+    <converter:GetFirstCharConverter x:Key="GetFirstCharConverter" />
+    <converter:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+    <converter:MessageToRichTextConverter x:Key="MessageToRichTextConverter" />
+</ResourceDictionary>

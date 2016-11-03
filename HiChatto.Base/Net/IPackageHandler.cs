@@ -8,6 +8,6 @@ namespace HiChatto.Base.Net
 {
     public interface IPackageHandler
     {
-        int Handle(NetSource source, Package pkg);
+        bool Handle(object sender, Package pkg);
     }
 }

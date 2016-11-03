@@ -5,10 +5,18 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Net;
 using System.Net.Sockets;
+using HiChatto.Base.Net;
+using System.Reflection;
+
 namespace HiChatto.Server
 {
     public class Server
     {
+        static IPackageHandler[] _handlers;
+        public static IPackageHandler[] Handlers
+        {
+            get { return _handlers; }
+        }
         private ServerConfig _config;
         public ServerConfig Config
         {
@@ -27,7 +35,11 @@ namespace HiChatto.Server
             _config = new ServerConfig();
         }
         public void Start()
-        {       
+        {
+            if (_handlers == null)
+            {
+                LoadPackageHandler();
+            }
             _clients = new List<Client>();
             _listener = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             _ipe = new IPEndPoint(IPAddress.Parse(_config.IP), _config.Port);
@@ -81,8 +93,23 @@ namespace HiChatto.Server
         private void Client_Disconnected(object sender, EventArgs e)
         {
             var c = (Client)sender;
-            Console.WriteLine("Disconnected {0}", c.Socket.RemoteEndPoint.ToString());
             _clients.Remove(c);
+        }
+        protected void LoadPackageHandler()
+        {
+            _handlers = new IPackageHandler[64];
+            var assembly = Assembly.GetAssembly(typeof(HiChatto.Server.Client));
+            var types = assembly.GetTypes();
+            foreach (var item in types)
+            {
+                if (item.IsClass && item.GetInterface("HiChatto.Base.Net.IPackageHandler") != null)
+                {
+                    PackageHandlerAttribute a = (PackageHandlerAttribute)item.GetCustomAttribute(typeof(PackageHandlerAttribute));
+                    _handlers[a.Code] = (IPackageHandler)Activator.CreateInstance(item);
+                    Console.WriteLine("Loaded {0} Handler", _handlers[a.Code].ToString());
+
+                }
+            }
         }
     }
 }

@@ -38,14 +38,14 @@
     <Compile Include="Net\ePackageType.cs" />
     <Compile Include="Net\IPackageHandler.cs" />
     <Compile Include="Net\NetSource.cs" />
+    <Compile Include="Net\NetSourceEventArgs.cs" />
+    <Compile Include="Net\NetSourceEventHandler.cs" />
     <Compile Include="Net\Package.cs" />
     <Compile Include="Net\PackageHandlerAttribute.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="Windows.Foundation.UniversalApiContract">
-      <HintPath>C:\Program Files (x86)\Windows Kits\10\References\Windows.Foundation.UniversalApiContract\3.0.0.0\Windows.Foundation.UniversalApiContract.winmd</HintPath>
-    </Reference>
+    <None Include="project.json" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

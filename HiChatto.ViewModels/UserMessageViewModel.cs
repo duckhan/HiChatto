@@ -4,11 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace HiChatto.Universal.Models
+namespace HiChatto.ViewModels
 {
-    public class UserMessage
+    public class UserMessageViewModel:ViewModelBase
     {
-        public UserInfo User;
-        public MessageGroup Message;
     }
 }

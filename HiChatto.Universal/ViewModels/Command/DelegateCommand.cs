@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
-namespace HiChatto.Models.ViewModels
+namespace HiChatto.Universal.ViewModels.Command
 {
     public class DelegateCommand : ICommand
     {
