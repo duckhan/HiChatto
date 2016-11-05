@@ -62,7 +62,7 @@ namespace HiChatto.Server
 
         private void SendAsyncCompleted(object sender, SocketAsyncEventArgs e)
         {
-            Console.WriteLine("Sent {0} bytes to {1}", e.BytesTransferred, e.RemoteEndPoint.ToString());
+            Console.WriteLine("Sent {0} bytes", e.BytesTransferred);
         }
 
         private void ImpReceiveAsync(SocketAsyncEventArgs e)
@@ -95,16 +95,24 @@ namespace HiChatto.Server
             OnDisconnect();
         }
 
-        public override void Send(Package pkg)
-        {
-            throw new NotImplementedException();
-        }
-
-
 
         protected override void SendTCP(int numBytes, Package pkg)
         {
-            throw new NotImplementedException();
+            try
+            {
+                if (_socket != null && _socket.Connected)
+                {
+                    SocketAsyncEventArgs e = new SocketAsyncEventArgs();
+                    e.SetBuffer(_sendBuffer, 0, numBytes);
+                    e.UserToken = pkg;
+                    e.Completed += SendAsyncCompleted;
+                    _socket.SendAsync(e);
+                }
+            }
+            catch
+            {
+                Disconnect();
+            }
         }
 
         public override void Connect()

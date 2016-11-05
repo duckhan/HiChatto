@@ -11,6 +11,9 @@ using Windows.ApplicationModel.Core;
 using Windows.Storage;
 using Newtonsoft.Json;
 using GalaSoft.MvvmLight;
+using GalaSoft.MvvmLight.Ioc;
+using HiChatto.Universal.ViewModels.Navigation;
+using GalaSoft.MvvmLight.Views;
 
 namespace HiChatto.Universal.ViewModels
 {
@@ -34,9 +37,11 @@ namespace HiChatto.Universal.ViewModels
                 Set("IsConnectable", ref _IsConnectable, value);
             }
         }
-
-        public StartViewModel()
+        INavigationService navigationService;
+        public StartViewModel(INavigationService navigationService)
         {
+            this.navigationService = navigationService;
+            _config = SimpleIoc.Default.GetInstance<ClientConfig>();
             LoadConfigAsync();
             IsConnectable = _config != null && _config.ServerIP != null && _config.UserName != null;
         }
@@ -71,32 +76,50 @@ namespace HiChatto.Universal.ViewModels
                 if (file.IsAvailable)
                 {
                     string str = File.ReadAllText(file.Path);
-                    _config = JsonConvert.DeserializeObject<ClientConfig>(str);
-                    _config = _config == null ? new ClientConfig() : _config;
+                    ClientConfig config = JsonConvert.DeserializeObject<ClientConfig>(str);
+                    if (config != null)
+                    {
+                        _config.ServerIP = config.ServerIP;
+                        _config.ServerPort = config.ServerPort;
+                        _config.UserName = config.UserName;
+                    }
                 }
             }
             catch
             {
-                _config = new ClientConfig();
+               
             }
         }
         private void Connect()
         {
-            Client c = new Client(_config);
+            Client c = SimpleIoc.Default.GetInstance<Client>();
+            if (c == null)
+            {
+                return;
+            }
+
             c.Connect();
-            MessageInfo s = new MessageInfo();
-            s.Content = "DucKhan";
-            s.GroupID = 1;
-            s.ID = 1;
-            s.IsReceived = false;
-            Package pkg = new Package((int)ePackageType.TEXT_MESSAGE);
-            pkg.WriteObject(s, typeof(MessageInfo));
-            c.Send(pkg);
+            c.Connected += Client_Connected;
         }
 
         private void Client_Connected(object sender, EventArgs e)
         {
-            CoreApplication.Properties.Add("Client", sender);
+            if ((sender as Client).IsConnected)
+            {
+                UserInfo u = new UserInfo() { UserID = 1, UserName = "DucKhan" };
+                MessageInfo info = new MessageInfo();
+                    info.Content = "DUCKHAn adaksaljs";
+                info.ID = 1;
+                info.GroupID = 2;
+                Package pkg = new Package(ePackageType.TEXT_MESSAGE);
+                pkg.WriteObject(info, typeof(MessageInfo));
+                (sender as Client).Send(pkg);
+                navigationService.NavigateTo("MainView");
+            }
+            else
+            {
+                
+            }
         }
     }
 }

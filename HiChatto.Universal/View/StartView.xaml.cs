@@ -1,9 +1,11 @@
-﻿using System;
-using GalaSoft.MvvmLight.Ioc;
+﻿using GalaSoft.MvvmLight.Ioc;
 using GalaSoft.MvvmLight.Views;
 using HiChatto.Universal.ViewModels;
+using System;
+using Windows.Networking;
+using Windows.Networking.Connectivity;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Documents;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -12,25 +14,27 @@ namespace HiChatto.Universal.View
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-
-    public sealed partial class MainView : Page, INavigationService
+    public sealed partial class StartView : Page, INavigationService
     {
-        public MainView()
+        StartViewModel viewModel;
+        public StartView()
         {
 
-            this.InitializeComponent();
             try
             {
-                ViewModel = SimpleIoc.Default.GetInstance<MainViewModel>();
+                viewModel = SimpleIoc.Default.GetInstance<StartViewModel>();
             }
-            catch
+            catch (System.Exception)
             {
-                ViewModel = new MainViewModel(this);
-                SimpleIoc.Default.Register<MainViewModel>(() => ViewModel);
+                viewModel = new StartViewModel(this);
+                SimpleIoc.Default.Register<StartViewModel>(() => viewModel);
             }
-            DataContext = ViewModel;
+            finally
+            {
+                this.InitializeComponent();
+                DataContext = viewModel;
+            }
         }
-        public MainViewModel ViewModel;
         public string CurrentPageKey
         {
             get
@@ -51,13 +55,13 @@ namespace HiChatto.Universal.View
             App app = (App)App.Current;
             if (app.PageTypes.ContainsKey(pageKey))
             {
-                Goto(app.PageTypes[pageKey], null);
+                Goto(app.PageTypes[pageKey],null);
             }
 
         }
-        async void Goto(Type pageType, object parameter)
+        async void Goto(Type pageType,object parameter)
         {
-            await this.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () => Frame.Navigate(pageType, parameter));
+            await this.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () => Frame.Navigate(pageType,parameter));
         }
         public void NavigateTo(string pageKey, object parameter)
         {
@@ -68,5 +72,4 @@ namespace HiChatto.Universal.View
             }
         }
     }
-
 }

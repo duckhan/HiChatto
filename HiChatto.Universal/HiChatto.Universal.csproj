@@ -95,12 +95,13 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ViewModels\BaseViewModel.cs" />
+    <Compile Include="ViewModels\Navigation\IFrameNavigationService.cs" />
     <Compile Include="Net\Handler\ReceiveTextMessageHandler.cs" />
+    <Compile Include="Net\Handler\UserOnlineHandler.cs" />
     <Compile Include="ViewModels\Converter\MessageToRichTextConverter.cs" />
-    <Compile Include="ViewModels\Navigation\INavigationService.cs" />
-    <Compile Include="ViewModels\Navigation\NavigationService.cs" />
-    <Compile Include="View\StartPage.xaml.cs">
-      <DependentUpon>StartPage.xaml</DependentUpon>
+    <Compile Include="View\StartView.xaml.cs">
+      <DependentUpon>StartView.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\MainView.xaml.cs">
       <DependentUpon>MainView.xaml</DependentUpon>
@@ -138,7 +139,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Page Include="View\StartPage.xaml">
+    <Page Include="View\StartView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

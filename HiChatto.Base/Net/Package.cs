@@ -61,6 +61,9 @@ namespace HiChatto.Base.Net
         public Package(int code) : this(0,code, PackageSize)
         {
         }
+        public Package(ePackageType code) : this((int)code)
+        {
+        }
         public void WriteHeader()
         {
             int currentOffset = _offset;
@@ -218,7 +221,7 @@ namespace HiChatto.Base.Net
                 object obj = d.ReadObject(ms);
                 return obj;
             }
-            catch(Exception ex)
+            catch(Exception)
             {
                 return null;
             }

@@ -5,7 +5,7 @@
         NONE=0,
         USER_LOGIN=1,
         USER_CONNECT,
-        TEXT_MESSAGE
-
+        TEXT_MESSAGE,
+        USER_ONLINE
     }
 }

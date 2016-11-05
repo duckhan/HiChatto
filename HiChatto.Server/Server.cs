@@ -93,6 +93,7 @@ namespace HiChatto.Server
         private void Client_Disconnected(object sender, EventArgs e)
         {
             var c = (Client)sender;
+            Console.WriteLine("Disconnted");
             _clients.Remove(c);
         }
         protected void LoadPackageHandler()

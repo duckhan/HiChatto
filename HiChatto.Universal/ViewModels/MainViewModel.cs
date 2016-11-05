@@ -4,10 +4,14 @@ using HiChatto.Models;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight;
 using Windows.UI.Xaml;
+using GalaSoft.MvvmLight.Views;
+using HiChatto.Universal.Net;
+using GalaSoft.MvvmLight.Ioc;
+using GalaSoft.MvvmLight.Threading;
 
 namespace HiChatto.Universal.ViewModels
 {
-    public class MainViewModel : ViewModelBase
+    public class MainViewModel : BaseViewModel
     {
         private List<UserMessage> userMessages;
         public List<UserMessage> UserMessages
@@ -21,14 +25,32 @@ namespace HiChatto.Universal.ViewModels
             get { return _ContentVistable; }
             set
             {
-                Set("IsMessageContentVisitable", ref _ContentVistable, value);
+                if (_ContentVistable != value)
+                {
+                    _ContentVistable = value;
+                    DispatcherHelper.CheckBeginInvokeOnUI(() => OnProtertyChanged("IsMessageContentVisitable"));
+                }
             }
         }
-        NetSource client;
-        public MainViewModel()
+        private INavigationService navigationService;
+        Client client;
+        public MainViewModel(INavigationService navigationService)
         {
             _ContentVistable = Visibility.Collapsed;
-            userMessages = GetSampleData();
+            userMessages = new List<UserMessage>();
+            this.navigationService = navigationService;
+            client = SimpleIoc.Default.GetInstance<Client>();
+            client.Received += Client_Received;
+        }
+
+        private void Client_Received(NetSource sender, NetSourceEventArgs e)
+        {
+            if (e.Package.Code == 4)
+            {
+                UserInfo u = (UserInfo)e.Package.ReadObject(typeof(UserInfo));
+                UserMessages.Add(new UserMessage() { User = u });
+                DispatcherHelper.CheckBeginInvokeOnUI(() => OnProtertyChanged("UserMessages"));
+            }
         }
 
         public RelayCommand ListViewSelectedCommand { get { return new RelayCommand(ListViewSelected); } }

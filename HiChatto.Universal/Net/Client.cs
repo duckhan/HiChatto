@@ -24,6 +24,7 @@ namespace HiChatto.Universal.Net
         private void ReceiveAsynCompleted(object sender, SocketAsyncEventArgs e)
         {
             OnRecieve(e.BytesTransferred);
+            RecieveAsync();
         }
 
         private void ConnectAsyncComplete(object sender, SocketAsyncEventArgs e)
@@ -93,6 +94,7 @@ namespace HiChatto.Universal.Net
                 _socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
                 conEv.Completed += ConnectAsyncComplete;
                 _socket.ConnectAsync(conEv);
+                RecieveAsync();
             }
             catch
             {

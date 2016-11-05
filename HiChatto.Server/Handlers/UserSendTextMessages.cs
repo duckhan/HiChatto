@@ -17,11 +17,17 @@ namespace HiChatto.Server.Handlers
             {
                 MessageInfo mess = (MessageInfo)pkg.ReadObject(typeof(MessageInfo));
                 Console.WriteLine("Message conent: {0}", mess.Content);
+                UserInfo u = new UserInfo();
+                u.UserName = "Duc Khan 123";
+                u.UserID = 123;
+                Package p= new Package((int)ePackageType.USER_ONLINE);
+                p.WriteObject(u, typeof(UserInfo));
+                Client c = (Client)sender;
+                c.Send(p);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-
-                throw;
+                Console.WriteLine(ex.Message);
             }
             return true;
         }
