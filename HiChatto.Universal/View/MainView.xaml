@@ -8,18 +8,14 @@
                 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                 xmlns:Models="using:HiChatto.Models"
                 x:Class="HiChatto.Universal.View.MainView"
-                xmlns:toolkit="using:Cimbalino.Toolkit.Behaviors"
                 d:DataContext="{d:DesignInstance Type=vm:MainViewModel}"
                 mc:Ignorable="d">
     <local:BasePage.Resources>
-        <CollectionViewSource x:Name="UserMessages"
-                              Source="{Binding UserMessages}" />
-        <CollectionViewSource x:Name="GroupMessage"
-                              Source="{Binding GroupMessage.Messages,Source={StaticResource UserMessages}}" />
+        <CollectionViewSource x:Name="Groups"
+                              Source="{Binding Groups}" />
     </local:BasePage.Resources>
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Grid x:Name="RootGrid">
-
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"
                                   MaxWidth="250" />
@@ -32,7 +28,7 @@
                 </Grid.RowDefinitions>
                 <Grid Margin="5">
                     <ListView x:Name="listView"
-                              ItemsSource="{Binding Source={StaticResource UserMessages}}"
+                              ItemsSource="{Binding Source={StaticResource Groups}}"
                               Padding="5">
                         <interactivity:Interaction.Behaviors>
                             <core:EventTriggerBehavior EventName="Tapped">
@@ -90,11 +86,27 @@
                                TextWrapping="Wrap"
                                Text="{Binding User.UserName,Source={StaticResource UserMessages}}" />
 
-                    <WebView Grid.Row="1"
-                             DataContext="{Binding GroupMessage,Source={StaticResource UserMessages}}"
-                             x:Name="contentControl"
-                             local:Properties.HtmlString="{Binding Messages,Converter={StaticResource MessageToHtmlConverter}}" />
-
+                    <Grid Grid.Row="1">
+                        <interactivity:Interaction.Behaviors>
+                            <core:DataTriggerBehavior Binding="{Binding Type}"
+                                                      Value="1">
+                                <core:DataTriggerBehavior.Actions>
+                                    <core:ChangePropertyAction PropertyName="ItemTemplate"
+                                                               TargetObject="{Binding ElementName=ListMessage}" 
+                                                               Value="{StaticResource ImageMessage}"/>
+                                </core:DataTriggerBehavior.Actions>
+                            </core:DataTriggerBehavior>
+                            <core:DataTriggerBehavior Binding="{Binding Type}"
+                                                      Value="0">
+                                <core:DataTriggerBehavior.Actions>
+                                    <core:ChangePropertyAction PropertyName="ItemTemplate"
+                                                               TargetObject="{Binding ElementName=ListMessage}"
+                                                               Value="{StaticResource TextMessage}" />
+                                </core:DataTriggerBehavior.Actions>
+                            </core:DataTriggerBehavior>
+                        </interactivity:Interaction.Behaviors>
+                        <ListView x:Name="ListMessage" />
+                    </Grid>                   
                     <Grid Grid.Row="2"
                           x:Name="SendControls">
                         <Grid.RowDefinitions>
@@ -120,10 +132,9 @@
                                 <ColumnDefinition Width="50" />
                             </Grid.ColumnDefinitions>
                             <TextBox x:Name="txtMessage"
-                                     
                                      Text="{Binding MessageToSend,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
                                      KeyUp="txtMessage_KeyUp">
-                            
+
                             </TextBox>
                             <Grid Grid.Column="1">
                                 <SymbolIcon Symbol="Send"

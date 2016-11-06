@@ -1,19 +1,14 @@
-﻿using HiChatto.Base.Net;
-using HiChatto.Models;
+﻿using HiChatto.Models;
 using HiChatto.Universal.Net;
-using HiChatto.Universal.ViewModels.Command;
 using System;
 using System.IO;
-using System.ServiceModel.Channels;
-using System.Threading.Tasks;
 using System.Windows.Input;
-using Windows.ApplicationModel.Core;
 using Windows.Storage;
 using Newtonsoft.Json;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Ioc;
 using HiChatto.Universal.ViewModels.Communicate;
-using GalaSoft.MvvmLight.Views;
+using GalaSoft.MvvmLight.Command;
 
 namespace HiChatto.Universal.ViewModels
 {
@@ -45,13 +40,13 @@ namespace HiChatto.Universal.ViewModels
             LoadConfigAsync();
             IsConnectable = _config != null && _config.ServerIP != null && _config.UserName != null;
         }
-        public ICommand SaveConfigCommand
+        public RelayCommand SaveConfigCommand
         {
-            get { return new DelegateCommand(SaveConfig); }
+            get { return new RelayCommand(SaveConfig); }
         }
         public ICommand ConnectCommand
         {
-            get { return new DelegateCommand(Connect); }
+            get { return new RelayCommand(Connect); }
         }
         private void SaveConfig()
         {

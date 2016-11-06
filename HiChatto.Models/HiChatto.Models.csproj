@@ -38,11 +38,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ClientConfig.cs" />
-    <Compile Include="MessageGroup.cs" />
+    <Compile Include="eMessageType.cs" />
+    <Compile Include="GroupMessage.cs" />
+    <Compile Include="GroupMessageCollection.cs" />
     <Compile Include="MessageInfo.cs" />
+    <Compile Include="NotifyModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UserCollection.cs" />
     <Compile Include="UserInfo.cs" />
-    <Compile Include="UserMessage.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
