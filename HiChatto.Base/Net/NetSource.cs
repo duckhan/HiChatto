@@ -1,26 +1,29 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Collections;
 using System.Linq;
 using System.Text;
 using System.Net;
+using System.Collections.Generic;
 
 namespace HiChatto.Base.Net
 {
     public abstract class NetSource
     {
         protected bool _isConnected;
-
+        protected bool _isSending;
+        protected Queue<Package> _pkgQueue;
         public event NetSourceEventHandler Sent;
         public event NetSourceEventHandler Received;
         public event NetSourceEventHandler Connected;
         public event NetSourceEventHandler Disconnected;
         protected byte[] _sendBuffer;
         protected byte[] _recieveBuffer;
-        public NetSource(byte[] sendBuff,byte[] recieveBuff)
+        public NetSource(byte[] sendBuff, byte[] recieveBuff)
         {
-            _isConnected = false;       
+            _isConnected = false;
             _sendBuffer = sendBuff;
             _recieveBuffer = recieveBuff;
+            _pkgQueue = new Queue<Package>();
         }
         public virtual void Send(Package pkg)
         {
@@ -31,9 +34,9 @@ namespace HiChatto.Base.Net
             {
                 _sendBuffer[i] = len[i];
             }
-            SendTCP(pkg.Length + 4,pkg);
+            SendTCP(pkg.Length + 4, pkg);
         }
-        protected abstract void SendTCP(int numBytes,Package pkg);
+        protected abstract void SendTCP(int numBytes, Package pkg);
         protected virtual void OnRecieve(int numbytes)
         {
             int len = BitConverter.ToInt32(_recieveBuffer, 0);
@@ -47,7 +50,7 @@ namespace HiChatto.Base.Net
         }
         protected virtual void OnRecievePackage(Package pkg)
         {
-           if (Received != null)
+            if (Received != null)
             {
                 NetSourceEventArgs e = new NetSourceEventArgs(_recieveBuffer, pkg.Length + 4, pkg);
                 Received(this, e);
@@ -62,7 +65,7 @@ namespace HiChatto.Base.Net
                 Connected(this, new NetSourceEventArgs());
             }
         }
-        public void OnSent(NetSource sender,NetSourceEventArgs e)
+        public void OnSent(NetSource sender, NetSourceEventArgs e)
         {
             if (Sent != null)
             {

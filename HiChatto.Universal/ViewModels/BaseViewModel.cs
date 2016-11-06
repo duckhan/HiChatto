@@ -4,6 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.ComponentModel;
+using GalaSoft.MvvmLight.Threading;
+using Windows.UI.Core;
+
 namespace HiChatto.Universal.ViewModels
 {
     public class BaseViewModel : INotifyPropertyChanged
@@ -11,7 +14,7 @@ namespace HiChatto.Universal.ViewModels
         public event PropertyChangedEventHandler PropertyChanged;
         protected void OnProtertyChanged(string propertyName)
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            DispatcherHelper.CheckBeginInvokeOnUI(() => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName)));
         }
     }
 }

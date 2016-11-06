@@ -8,11 +8,12 @@ namespace HiChatto.Models
     public class UserMessage
     {
         public UserInfo User { get; set; }
-        public string Name { get { return User.UserName; } }
         public MessageGroup Messages { get; set; }
+        public MessageInfo Current { get; set; }
         public UserMessage()
         {
             Messages = new MessageGroup();
+            Current = new MessageInfo();
         }
     }
 }

@@ -19,7 +19,7 @@ using HiChatto.Universal.Net;
 using GalaSoft.MvvmLight.Ioc;
 using HiChatto.Models;
 using HiChatto.Universal.ViewModels;
-using HiChatto.Universal.ViewModels.Navigation;
+using HiChatto.Universal.ViewModels.Communicate;
 using GalaSoft.MvvmLight.Threading;
 using HiChatto.Base.Net;
 using System.Reflection;

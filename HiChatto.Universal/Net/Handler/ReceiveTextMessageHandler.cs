@@ -10,22 +10,22 @@ using HiChatto.Models;
 namespace HiChatto.Universal.Net.Handler
 {
     [PackageHandler((int)ePackageType.TEXT_MESSAGE,"Receive text message handler")]
-    class ReceiveTextMessageHandler : IPackageHandler
+    public class ReceiveTextMessageHandler : IPackageHandler
     {
         public bool Handle(object sender, Package pkg)
         {
             if (sender is MainViewModel)
             {
                 pkg.ResetOffset();
-                object obj=pkg.ReadObject(typeof(MessageInfo));
+                MessageInfo obj=pkg.ReadObject<MessageInfo>();
                 if (!(obj is MessageInfo))
                 {
                     return false;
                 }
                 MainViewModel vm = sender as MainViewModel;
                 MessageInfo mess = obj as MessageInfo;
-                UserMessage g = vm.UserMessages.SingleOrDefault(u => u.Messages.GroupID == mess.GroupID);
-                g.Messages.Add(mess);
+                mess.IsReceived = true;
+                vm.AddMessageInfo(mess);
                 return true;
             }
             return false;

@@ -1,21 +1,22 @@
-﻿<Page xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-      xmlns:local="using:HiChatto.Universal.View"
-      xmlns:core="using:Microsoft.Xaml.Interactions.Core"
-      xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
-      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-      xmlns:vm="using:HiChatto.Universal.ViewModels"
-      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-      xmlns:Models="using:HiChatto.Models"
-      x:Class="HiChatto.Universal.View.MainView"
-      d:DataContext="{d:DesignInstance Type=vm:MainViewModel}"
-      mc:Ignorable="d">
-    <Page.Resources>
-        <CollectionViewSource x:Name="MessageGroups"
+﻿<local:BasePage xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                xmlns:local="using:HiChatto.Universal.View"
+                xmlns:core="using:Microsoft.Xaml.Interactions.Core"
+                xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
+                xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                xmlns:vm="using:HiChatto.Universal.ViewModels"
+                xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                xmlns:Models="using:HiChatto.Models"
+                x:Class="HiChatto.Universal.View.MainView"
+                xmlns:toolkit="using:Cimbalino.Toolkit.Behaviors"
+                d:DataContext="{d:DesignInstance Type=vm:MainViewModel}"
+                mc:Ignorable="d">
+    <local:BasePage.Resources>
+        <CollectionViewSource x:Name="UserMessages"
                               Source="{Binding UserMessages}" />
-        <CollectionViewSource x:Name="Messages"
-                              Source="{Binding Messages,Source={StaticResource MessageGroups}}" />
-    </Page.Resources>
+        <CollectionViewSource x:Name="GroupMessage"
+                              Source="{Binding GroupMessage.Messages,Source={StaticResource UserMessages}}" />
+    </local:BasePage.Resources>
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Grid x:Name="RootGrid">
 
@@ -30,12 +31,14 @@
                     <RowDefinition Height="1*" />
                 </Grid.RowDefinitions>
                 <Grid Margin="5">
-                    <ListView ItemsSource="{Binding Source={StaticResource MessageGroups}}"
+                    <ListView x:Name="listView"
+                              ItemsSource="{Binding Source={StaticResource UserMessages}}"
                               Padding="5">
                         <interactivity:Interaction.Behaviors>
                             <core:EventTriggerBehavior EventName="Tapped">
                                 <core:EventTriggerBehavior.Actions>
-                                    <core:InvokeCommandAction Command="{Binding ListViewSelectedCommand}" />
+                                    <core:InvokeCommandAction Command="{Binding ListViewSelectedCommand}"
+                                                              CommandParameter="{Binding SelectedItem, ElementName=listView}" />
                                 </core:EventTriggerBehavior.Actions>
                             </core:EventTriggerBehavior>
                         </interactivity:Interaction.Behaviors>
@@ -80,13 +83,17 @@
                         <RowDefinition Height="100"
                                        MaxHeight="200" />
                     </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
                     <TextBlock FontSize="30"
                                TextWrapping="Wrap"
-                               Text="{Binding User.UserName,Source={StaticResource MessageGroups}}" />
+                               Text="{Binding User.UserName,Source={StaticResource UserMessages}}" />
 
-                    <ContentControl Grid.Row="1"
-                                    Content="{Binding Messages,Source={StaticResource MessageGroups},Converter={StaticResource MessageToRichTextConverter}}" />
-
+                    <WebView Grid.Row="1"
+                             DataContext="{Binding GroupMessage,Source={StaticResource UserMessages}}"
+                             x:Name="contentControl"
+                             local:Properties.HtmlString="{Binding Messages,Converter={StaticResource MessageToHtmlConverter}}" />
 
                     <Grid Grid.Row="2"
                           x:Name="SendControls">
@@ -112,14 +119,28 @@
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="50" />
                             </Grid.ColumnDefinitions>
-                            <RichEditBox x:Name="rTxtMessage" />
+                            <TextBox x:Name="txtMessage"
+                                     
+                                     Text="{Binding MessageToSend,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
+                                     KeyUp="txtMessage_KeyUp">
+                            
+                            </TextBox>
                             <Grid Grid.Column="1">
                                 <SymbolIcon Symbol="Send"
                                             Foreground="LightBlue"
                                             Width="40"
                                             Height="40"
                                             VerticalAlignment="Center"
-                                            HorizontalAlignment="Center" />
+                                            HorizontalAlignment="Center">
+                                    <interactivity:Interaction.Behaviors>
+                                        <core:EventTriggerBehavior EventName="Tapped">
+                                            <core:EventTriggerBehavior.Actions>
+                                                <core:InvokeCommandAction Command="{Binding SendCommand}" />
+                                            </core:EventTriggerBehavior.Actions>
+                                        </core:EventTriggerBehavior>
+                                    </interactivity:Interaction.Behaviors>
+
+                                </SymbolIcon>
                             </Grid>
                         </Grid>
                     </Grid>
@@ -127,4 +148,4 @@
             </Grid>
         </Grid>
     </Grid>
-</Page>
+</local:BasePage>

@@ -8,17 +8,27 @@ namespace HiChatto.Universal.Net
     public class Client : NetSource
     {
         Socket _socket;
+        UserInfo _user;
+        public UserInfo User
+        {
+            get { return _user; }
+            set
+            {
+                _user = value;
+            }
+        }
         ClientConfig _config;
         public ClientConfig Config { get { return _config; } }
         public Socket Socket { get { return _socket; } }
         public bool IsConnected
         {
-            get { return _isConnected; }
+            get { return _isConnected && _socket != null && _socket.Connected; }
         }
         SocketAsyncEventArgs receiveEvent;
         public Client(ClientConfig config) : base(new byte[8096], new byte[8096])
         {
             _config = config;
+            _user = new UserInfo();
         }
 
         private void ReceiveAsynCompleted(object sender, SocketAsyncEventArgs e)
@@ -52,11 +62,25 @@ namespace HiChatto.Universal.Net
             {
                 if (_socket != null && _socket.Connected)
                 {
-                    SocketAsyncEventArgs e = new SocketAsyncEventArgs();
-                    e.SetBuffer(_sendBuffer, 0, numBytes);
-                    e.UserToken = pkg;
-                    e.Completed += SendAsyncCompleted;
-                    _socket.SendAsync(e);
+                    lock (_pkgQueue)
+                    {
+                        _pkgQueue.Enqueue(pkg);
+                        if (_isSending)
+                        {
+                            return;
+                        }
+                        else
+                        {
+                            _isSending = true;
+                            pkg = _pkgQueue.Dequeue();
+                        }
+                        SocketAsyncEventArgs e = new SocketAsyncEventArgs();
+                        e.SetBuffer(_sendBuffer, 0, numBytes);
+                        e.UserToken = pkg;
+                        e.Completed += SendAsyncCompleted;
+                        _socket.SendAsync(e);
+                    }
+                  
                 }
             }
             catch
@@ -69,6 +93,12 @@ namespace HiChatto.Universal.Net
             NetSourceEventArgs sentEvent = new NetSourceEventArgs();
             sentEvent.UserToken = e;
             OnSent(this, sentEvent);
+            _isSending = false;
+            if (_pkgQueue.Count > 0)
+            {
+                Package pkg = _pkgQueue.Dequeue();
+                SendTCP(pkg.Length + 4, pkg);
+            }
         }
 
         public override void Disconnect()
@@ -94,7 +124,7 @@ namespace HiChatto.Universal.Net
                 _socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
                 conEv.Completed += ConnectAsyncComplete;
                 _socket.ConnectAsync(conEv);
-                RecieveAsync();
+                
             }
             catch
             {

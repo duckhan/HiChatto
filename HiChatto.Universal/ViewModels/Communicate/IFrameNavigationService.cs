@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace HiChatto.Universal.ViewModels.Navigation
+namespace HiChatto.Universal.ViewModels.Communicate
 {
     public interface IFrameNavigationService : INavigationService
     {

@@ -95,11 +95,19 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Net\Handler\GetAllUserHandler.cs" />
+    <Compile Include="Net\Handler\UserConnectHandler.cs" />
+    <Compile Include="Net\PackagesOut.cs" />
     <Compile Include="ViewModels\BaseViewModel.cs" />
-    <Compile Include="ViewModels\Navigation\IFrameNavigationService.cs" />
+    <Compile Include="ViewModels\Communicate\IFrameNavigationService.cs" />
     <Compile Include="Net\Handler\ReceiveTextMessageHandler.cs" />
     <Compile Include="Net\Handler\UserOnlineHandler.cs" />
-    <Compile Include="ViewModels\Converter\MessageToRichTextConverter.cs" />
+    <Compile Include="ViewModels\Communicate\IMessagerSercive.cs" />
+    <Compile Include="ViewModels\Converter\MessageToHtmlConverter.cs" />
+    <Compile Include="ViewModels\Converter\NullToIntConnverter.cs" />
+    <Compile Include="ViewModels\GroupMessageViewModel.cs" />
+    <Compile Include="View\BasePage.cs" />
+    <Compile Include="View\Properties.cs" />
     <Compile Include="View\StartView.xaml.cs">
       <DependentUpon>StartView.xaml</DependentUpon>
     </Compile>

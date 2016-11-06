@@ -16,5 +16,9 @@ namespace HiChatto.Base.Net
             _code = code;
             _desc = desc;
         }
+        public PackageHandlerAttribute(ePackageType code, string desc = null) : this((int)code, desc)
+        {
+
+        }
     }
 }

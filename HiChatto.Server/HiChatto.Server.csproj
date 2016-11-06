@@ -50,6 +50,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Client.cs" />
+    <Compile Include="Handlers\GetAllUserHandler.cs" />
     <Compile Include="Handlers\UserConnectHandler.cs" />
     <Compile Include="Handlers\UserSendTextMessages.cs" />
     <Compile Include="Program.cs" />

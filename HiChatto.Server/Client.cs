@@ -9,25 +9,39 @@ using HiChatto.Base;
 using HiChatto.Base.Net;
 using System.Reflection;
 using System.Threading;
+using HiChatto.Models;
 
 namespace HiChatto.Server
 {
     public class Client : NetSource
     {
         Socket _socket;
+        object obj = new object();
+        UserInfo _user;
+        public UserInfo User
+        {
+            get { return _user; }
+            set
+            {
+                _user = value;
+            }
+        }
         public Socket Socket
         {
             get { return _socket; }
         }
-        public int id;
+        public int ID
+        {
+            get { return _user == null ? 0 : _user.UserID; }
+            private set { }
+        }
         SocketAsyncEventArgs rc_event;
         public Client() : base(new byte[8096], new byte[8096])
         {
-            id = 0;
+            ID = 0;
             rc_event = new SocketAsyncEventArgs();
             rc_event.SetBuffer(_recieveBuffer, 0, 8096);
             rc_event.Completed += ReceiveAsyncComplete;
-           
             Received += Client_Received;
         }
 
@@ -51,20 +65,6 @@ namespace HiChatto.Server
                 Disconnect();
             }
         }
-        private void Send(byte[] buff)
-        {
-            SocketAsyncEventArgs e = new SocketAsyncEventArgs();
-            e.SetBuffer(buff, 0, buff.Length);
-            e.Completed += SendAsyncCompleted;
-            e.RemoteEndPoint = _socket.RemoteEndPoint;
-            _socket.SendAsync(e);
-        }
-
-        private void SendAsyncCompleted(object sender, SocketAsyncEventArgs e)
-        {
-            Console.WriteLine("Sent {0} bytes", e.BytesTransferred);
-        }
-
         private void ImpReceiveAsync(SocketAsyncEventArgs e)
         {
             if (_socket != null && _socket.Connected)
@@ -76,7 +76,7 @@ namespace HiChatto.Server
 
         public void Connect(Socket sk)
         {
-            id = Server.Clients.Count + 1;
+            //  ID = Server.Clients.Count + 1;
             _socket = sk;
             OnConnect();
         }
@@ -102,16 +102,42 @@ namespace HiChatto.Server
             {
                 if (_socket != null && _socket.Connected)
                 {
-                    SocketAsyncEventArgs e = new SocketAsyncEventArgs();
-                    e.SetBuffer(_sendBuffer, 0, numBytes);
-                    e.UserToken = pkg;
-                    e.Completed += SendAsyncCompleted;
-                    _socket.SendAsync(e);
+                    lock (_pkgQueue)
+                    {
+                        _pkgQueue.Enqueue(pkg);
+                        if (_isSending)
+                        {
+                            return;
+                        }
+                        else
+                        {
+                            _isSending = true;
+                            pkg = _pkgQueue.Dequeue();
+                        }
+                        SocketAsyncEventArgs e = new SocketAsyncEventArgs();
+                        e.SetBuffer(_sendBuffer, 0, numBytes);
+                        e.UserToken = pkg;
+                        e.Completed += SendAsyncCompleted;
+                        _socket.SendAsync(e);
+                    }
+
                 }
             }
             catch
             {
                 Disconnect();
+            }
+        }
+        private void SendAsyncCompleted(object sender, SocketAsyncEventArgs e)
+        {
+            NetSourceEventArgs sentEvent = new NetSourceEventArgs();
+            sentEvent.UserToken = e;
+            OnSent(this, sentEvent);
+            _isSending = false;
+            if (_pkgQueue.Count > 0)
+            {
+                Package pkg = _pkgQueue.Dequeue();
+                SendTCP(pkg.Length + 4, pkg);
             }
         }
 

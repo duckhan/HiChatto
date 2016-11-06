@@ -8,9 +8,5 @@ namespace HiChatto.Models
         public int UserID { get; set; }
         [DataMember]
         public string UserName { get; set; }
-        [DataMember]
-        public string DeviceName { get; set; }
-        [DataMember]
-        public string CurrentIP { get; set; }
     }
 }

@@ -1,15 +1,16 @@
 ﻿using HiChatto.Base.Net;
+using HiChatto.Models;
+using HiChatto.Universal.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using HiChatto.Models;
-using HiChatto.Universal.ViewModels;
+
 namespace HiChatto.Universal.Net.Handler
 {
-    [PackageHandler((int)ePackageType.USER_ONLINE,"User Online Handler")]
-    public class UserOnlineHandler : IPackageHandler
+    [PackageHandler(ePackageType.USER_CONNECT, "User Connected Handler")]
+    public class UserConnectHandler : IPackageHandler
     {
         public bool Handle(object sender, Package pkg)
         {
@@ -18,8 +19,8 @@ namespace HiChatto.Universal.Net.Handler
             {
                 return false;
             }
-            UserInfo user=pkg.ReadObject<UserInfo>();
-            vm.AddUser(user);
+            UserInfo info = pkg.ReadObject<UserInfo>();
+            vm.User = info;
             return true;
         }
     }

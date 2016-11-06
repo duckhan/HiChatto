@@ -15,15 +15,14 @@ namespace HiChatto.Server.Handlers
         {
             try
             {
-                MessageInfo mess = (MessageInfo)pkg.ReadObject(typeof(MessageInfo));
-                Console.WriteLine("Message conent: {0}", mess.Content);
-                UserInfo u = new UserInfo();
-                u.UserName = "Duc Khan 123";
-                u.UserID = 123;
-                Package p= new Package((int)ePackageType.USER_ONLINE);
-                p.WriteObject(u, typeof(UserInfo));
-                Client c = (Client)sender;
-                c.Send(p);
+                MessageInfo mess = pkg.ReadObject<MessageInfo>();
+                Client c = Server.GetClient(mess.IDReceiver);
+                if (c == null)
+                {
+                    return false;
+                }
+                pkg.ResetOffset();
+                c.Send(pkg);
             }
             catch (Exception ex)
             {

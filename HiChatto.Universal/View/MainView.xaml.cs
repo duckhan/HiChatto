@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using GalaSoft.MvvmLight.Ioc;
 using GalaSoft.MvvmLight.Views;
 using HiChatto.Universal.ViewModels;
@@ -13,9 +14,9 @@ namespace HiChatto.Universal.View
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
 
-    public sealed partial class MainView : Page, INavigationService
+    public sealed partial class MainView : BasePage
     {
-        public MainView()
+        public MainView():base("MainView")
         {
 
             this.InitializeComponent();
@@ -26,45 +27,21 @@ namespace HiChatto.Universal.View
             catch
             {
                 ViewModel = new MainViewModel(this);
-                SimpleIoc.Default.Register<MainViewModel>(() => ViewModel);
+                SimpleIoc.Default.Register(() => ViewModel);
             }
             DataContext = ViewModel;
         }
         public MainViewModel ViewModel;
-        public string CurrentPageKey
-        {
-            get
-            {
-                return "MainView";
-            }
-        }
-        public void GoBack()
-        {
-            if (Frame.CanGoBack)
-            {
-                Frame.GoBack();
-            }
-        }
 
-        public void NavigateTo(string pageKey)
+        private void txtMessage_KeyUp(object sender, Windows.UI.Xaml.Input.KeyRoutedEventArgs e)
         {
-            App app = (App)App.Current;
-            if (app.PageTypes.ContainsKey(pageKey))
+            if (e.Key == Windows.System.VirtualKey.Enter)
             {
-                Goto(app.PageTypes[pageKey], null);
-            }
-
-        }
-        async void Goto(Type pageType, object parameter)
-        {
-            await this.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () => Frame.Navigate(pageType, parameter));
-        }
-        public void NavigateTo(string pageKey, object parameter)
-        {
-            App app = (App)App.Current;
-            if (app.PageTypes.ContainsKey(pageKey))
-            {
-                Goto(app.PageTypes[pageKey], parameter);
+                if (ViewModel.SendCommand.CanExecute(null))
+                {
+                    ViewModel.SendCommand.Execute(null);
+                }
+                    
             }
         }
     }

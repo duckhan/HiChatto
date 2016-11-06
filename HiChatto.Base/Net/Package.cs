@@ -198,9 +198,9 @@ namespace HiChatto.Base.Net
             }
             return false;
         }
-        public void WriteObject(object obj,Type type)
+        public void WriteObject<T>(T obj) where T:class
         {
-            DataContractSerializer d = new DataContractSerializer(type);
+            DataContractSerializer d = new DataContractSerializer(typeof(T));
             MemoryStream ms = new MemoryStream();
             d.WriteObject(ms, obj);
             ms.Position = 0;
@@ -208,18 +208,18 @@ namespace HiChatto.Base.Net
             WriteInt(buff.Length);
             WriteBytes(buff);
         }
-        public object ReadObject(Type type)
+        public T ReadObject<T>() where T:class
         {
             try
             {
                 int len = ReadInt();
 
-                DataContractSerializer d = new DataContractSerializer(type);
+                DataContractSerializer d = new DataContractSerializer(typeof(T));
                 MemoryStream ms = new MemoryStream();
                 ms.Write(_buff, _offset, len);
                 ms.Position = 0;
                 object obj = d.ReadObject(ms);
-                return obj;
+                return obj as T;
             }
             catch(Exception)
             {

@@ -74,9 +74,9 @@ namespace HiChatto.Server
             {
                 Console.WriteLine("Accept conect from: {0}", e.AcceptSocket.RemoteEndPoint.ToString());
                 Client c = new Client();
-                _clients.Add(c);
                 c.Connect(e.AcceptSocket);
                 c.Disconnected += Client_Disconnected;
+                _clients.Add(c);
                 c.ReceiveAsync();
             }
             catch(Exception ex)
@@ -111,6 +111,18 @@ namespace HiChatto.Server
 
                 }
             }
+        }
+
+        public static Client GetClient(int clientID)
+        {
+            foreach (var item in _clients)
+            {
+                if (item.User.UserID == clientID)
+                {
+                    return item;
+                }
+            }
+            return null;
         }
     }
 }

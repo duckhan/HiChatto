@@ -12,7 +12,7 @@ using Windows.Storage;
 using Newtonsoft.Json;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Ioc;
-using HiChatto.Universal.ViewModels.Navigation;
+using HiChatto.Universal.ViewModels.Communicate;
 using GalaSoft.MvvmLight.Views;
 
 namespace HiChatto.Universal.ViewModels
@@ -37,10 +37,10 @@ namespace HiChatto.Universal.ViewModels
                 Set("IsConnectable", ref _IsConnectable, value);
             }
         }
-        INavigationService navigationService;
-        public StartViewModel(INavigationService navigationService)
+        IMessagerSercive messageService;
+        public StartViewModel(IMessagerSercive navigationService)
         {
-            this.navigationService = navigationService;
+            this.messageService = navigationService;
             _config = SimpleIoc.Default.GetInstance<ClientConfig>();
             LoadConfigAsync();
             IsConnectable = _config != null && _config.ServerIP != null && _config.UserName != null;
@@ -106,19 +106,11 @@ namespace HiChatto.Universal.ViewModels
         {
             if ((sender as Client).IsConnected)
             {
-                UserInfo u = new UserInfo() { UserID = 1, UserName = "DucKhan" };
-                MessageInfo info = new MessageInfo();
-                    info.Content = "DUCKHAn adaksaljs";
-                info.ID = 1;
-                info.GroupID = 2;
-                Package pkg = new Package(ePackageType.TEXT_MESSAGE);
-                pkg.WriteObject(info, typeof(MessageInfo));
-                (sender as Client).Send(pkg);
-                navigationService.NavigateTo("MainView");
+                messageService.NavigateTo("MainView");
             }
             else
             {
-                
+                messageService.ShowMessage("Can't connect. Try again", "Error");
             }
         }
     }
