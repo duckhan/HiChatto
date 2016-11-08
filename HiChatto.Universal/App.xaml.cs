@@ -52,6 +52,22 @@ namespace HiChatto.Universal
         }
         private IPackageHandler[] handlers;
         private ClientConfig _config;
+        public ClientConfig Config
+        {
+            get { return _config; }
+        }
+        private UniversalClient _Client;
+        public UniversalClient Client
+        {
+            get
+            {
+                return _Client;
+            }
+            set
+            {
+                _Client = value;
+            }
+        }
         public IPackageHandler[] Handlers { get { return handlers; } }
         void LoadPackageHandlers()
         {
@@ -112,7 +128,6 @@ namespace HiChatto.Universal
         protected override void OnLaunched(LaunchActivatedEventArgs e)
         {
             LoadConfigAsync();
-            SimpleIoc.Default.Register<NetSource, UniversalClient>();
             SimpleIoc.Default.Register(() => handlers);
             Action<ClientConfig> saveAction = SaveConfigAsync;
             SimpleIoc.Default.Register(() => saveAction);
@@ -180,7 +195,6 @@ namespace HiChatto.Universal
         {
             // SaveConfigAsync(_config);
             SimpleIoc.Default.Unregister<ClientConfig>();
-            SimpleIoc.Default.Unregister<UniversalClient>();
             SimpleIoc.Default.Unregister<Action<ClientConfig>>();
             var deferral = e.SuspendingOperation.GetDeferral();
             //TODO: Save application state and stop any background activity

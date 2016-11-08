@@ -87,6 +87,11 @@ namespace HiChatto.Base.Net
         }
         public abstract void ReceiveAsync();
         public abstract void Disconnect();
+        public virtual void Connect(ClientConfig config)
+        {
+            _config = config;
+            Connect();
+        }
         public abstract void Connect();
         protected virtual void OnConnect()
         {

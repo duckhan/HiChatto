@@ -39,6 +39,8 @@ namespace HiChatto.Server
 
         private void Client_Received(NetSource sender, NetSourceEventArgs e)
         {
+
+            Console.WriteLine("Receicve Package: {0}, Legnth={1}", e.Package.Code, e.Package.Length);
             Server.Handlers[e.Package.Code]?.Handle(sender, e.Package);
         }
 

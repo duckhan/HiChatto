@@ -65,10 +65,11 @@
                   Margin="5 0 0 0">
                 <Grid>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="40" />
+                        <ColumnDefinition Width="50" />
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
                     <Button Style="{StaticResource SymbolButton}"
+                            Margin="10 0 0 0"
                             HorizontalAlignment="Left"
                             x:Name="HambergerButton"
                             Click="HambergerButton_Click"

@@ -8,6 +8,8 @@ using Windows.UI.Xaml.Documents;
 using System.Threading;
 using HiChatto.Universal.Net;
 using HiChatto.Base.Net;
+using HiChatto.Models;
+using Windows.UI.Xaml.Navigation;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -19,21 +21,18 @@ namespace HiChatto.Universal.View
 
     public sealed partial class MainView : BasePage
     {
-        public MainView():base("MainView")
-        {
 
+        public MainView() : base("MainView")
+        {
+            UniversalClient client = (App.Current as App).Client;
             this.InitializeComponent();
-            try
-            {
-                ViewModel = SimpleIoc.Default.GetInstance<MainViewModel>();
-            }
-            catch
-            {
-                UniversalClient c= SimpleIoc.Default.GetInstance<NetSource>() as UniversalClient;
-                ViewModel = new MainViewModel(this, new PackageOut(c),c,SynchronizationContext.Current);
-                SimpleIoc.Default.Register(() => ViewModel);
-            }
+            ViewModel = new MainViewModel(this, new PackageOut(client), client, SynchronizationContext.Current);
             DataContext = ViewModel;
+        }
+
+        protected override void OnNavigatedFrom(NavigationEventArgs e)
+        {
+            base.OnNavigatedFrom(e);
         }
         public MainViewModel ViewModel;
 

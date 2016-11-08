@@ -5,7 +5,6 @@ using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Ioc;
 using HiChatto.ViewModels.Communicate;
 using GalaSoft.MvvmLight.Command;
-using Windows.Storage;
 using HiChatto.Base.Net;
 
 namespace HiChatto.ViewModels
@@ -31,10 +30,12 @@ namespace HiChatto.ViewModels
             }
         }
         IMessagerSercive messageService;
-        public StartViewModel(IMessagerSercive navigationService)
+        NetSource client;
+        public StartViewModel(IMessagerSercive navigationService,NetSource client)
         {
+            this.client = client;
             this.messageService = navigationService;
-            Config = SimpleIoc.Default.GetInstance<ClientConfig>();
+            Config = client.Config;
             //LoadConfigAsync();
             IsConnectable = _config != null && _config.ServerIP != null && _config.UserName != null;
         }
@@ -56,21 +57,15 @@ namespace HiChatto.ViewModels
 
         private void Connect()
         {
-            NetSource c = SimpleIoc.Default.GetInstance<NetSource>();
-            if (c == null)
-            {
-                return;
-            }
-
-            c.Connect();
-            c.Connected += Client_Connected;
+            client.Connect(_config);
+            client.Connected += Client_Connected;
         }
 
         private void Client_Connected(object sender, EventArgs e)
         {
             if ((sender as NetSource).IsConnected)
             {
-                messageService.NavigateTo("MainView");
+                messageService.NavigateTo("MainView",client);
             }
             else
             {

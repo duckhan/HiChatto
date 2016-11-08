@@ -1,5 +1,8 @@
 ﻿using GalaSoft.MvvmLight.Ioc;
 using GalaSoft.MvvmLight.Views;
+using HiChatto.Base.Net;
+using HiChatto.Models;
+using HiChatto.Universal.Net;
 using HiChatto.ViewModels;
 using System;
 using Windows.Networking;
@@ -20,20 +23,12 @@ namespace HiChatto.Universal.View
         public StartView() : base("StartView")
         {
 
-            try
-            {
-                viewModel = SimpleIoc.Default.GetInstance<StartViewModel>();
-            }
-            catch (System.Exception)
-            {
-                viewModel = new StartViewModel(this);
-                SimpleIoc.Default.Register<StartViewModel>(() => viewModel);
-            }
-            finally
-            {
-                this.InitializeComponent();
-                DataContext = viewModel;
-            }
+            App a = App.Current as App;
+            a.Client = new UniversalClient(a.Config);
+            viewModel = new StartViewModel(this,a.Client);
+            this.InitializeComponent();
+            DataContext = viewModel;
         }
     }
 }
+

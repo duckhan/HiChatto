@@ -121,6 +121,7 @@ namespace HiChatto.ViewModels
             client = netSource;
             client.Received += Client_Received;
             client.ReceiveAsync();
+            client.Disconnected += Client_Disconnected;
             Out = pkgOut;
             User.UserName = client.Config.UserName;
             Out.SendUserConnect();
@@ -128,6 +129,13 @@ namespace HiChatto.ViewModels
             {
                 Out.SendGetAllUser();
             }).ContinueWith((t) => IsLoading = false);
+        }
+
+        private void Client_Disconnected(NetSource sender, NetSourceEventArgs e)
+        {
+            messagerService.ShowMessage("Disconnected", "Network Infomation");
+            SimpleIoc.Default.Unregister<NetSource>();
+            messagerService.GoBack();
         }
         #endregion
 

@@ -58,12 +58,15 @@ namespace HiChatto.Universal.View
 
         public object Parameter { get; private set; }
 
-        public void GoBack()
+        public async void GoBack()
         {
-            if (Frame.CanGoBack)
+            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
-                Frame.GoBack();
-            }
+                if (Frame.CanGoBack)
+                {
+                    Frame.GoBack();
+                }
+            });
         }
 
         public async void NavigateTo(string pageKey)
@@ -75,11 +78,11 @@ namespace HiChatto.Universal.View
             }
         }
 
-        public void NavigateTo(string pageKey, object parameter)
+        public async void NavigateTo(string pageKey, object parameter)
         {
             if (pages.ContainsKey(pageKey))
             {
-                Frame.Navigate(pages[pageKey], parameter);
+                await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => Frame.Navigate(pages[pageKey], parameter));
             }
         }
 

@@ -29,12 +29,20 @@ namespace HiChatto.Universal.Net
         {
             _config = config;
             _User = new UserInfo();
+            _User.UserName = _config.UserName;
         }
 
         private void ReceiveAsynCompleted(object sender, SocketAsyncEventArgs e)
         {
-            OnRecieve(e.BytesTransferred);
-            ReceiveAsync();
+            if (e.BytesTransferred > 0 && e.SocketError == SocketError.Success)
+            {
+                OnRecieve(e.BytesTransferred);
+                ReceiveAsync();
+            }
+            else
+            {
+                Disconnect();
+            }
         }
 
         private void ConnectAsyncComplete(object sender, SocketAsyncEventArgs e)
@@ -42,7 +50,7 @@ namespace HiChatto.Universal.Net
             _isConnected = true;
             OnConnect();
         }
-        
+
         public override void ReceiveAsync()
         {
             try
@@ -51,17 +59,9 @@ namespace HiChatto.Universal.Net
             }
             catch
             {
-                _isConnected = false;
                 Disconnect();
             }
         }
-
-
-        void receiveFile(SocketAsyncEventArgs e, FileStream fs)
-        {
-
-        }
-
 
         protected override void SendTCP(int numBytes, Package pkg)
         {
@@ -89,6 +89,10 @@ namespace HiChatto.Universal.Net
                     }
 
                 }
+                else
+                {
+                    Disconnect();
+                }
             }
             catch
             {
@@ -110,13 +114,11 @@ namespace HiChatto.Universal.Net
 
         public override void Disconnect()
         {
-            if (_isConnected)
-            {
-                _isConnected = false;
-                _socket.Dispose();
-                receiveEvent.Dispose();
-                OnDisconnect();
-            }
+
+            _isConnected = false;
+            _socket?.Dispose();
+            receiveEvent?.Dispose();
+            OnDisconnect();
         }
 
         public override void Connect()
@@ -138,6 +140,6 @@ namespace HiChatto.Universal.Net
                 _isConnected = false;
             }
         }
-        
+
     }
 }
