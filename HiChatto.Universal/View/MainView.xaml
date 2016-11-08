@@ -164,7 +164,7 @@
                                         <ListView.ItemTemplate>
                                             <DataTemplate>
                                                 <ContentControl HorizontalAlignment="{Binding IsReceived,Converter={StaticResource BoolToHorizontalAlignmentConverter}}"
-                                                                Margin="0 0 10 0"
+                                                                Margin="0 0 20 0"
                                                                 Content="{Binding Converter={StaticResource MessageToControlConverter}}" />
                                             </DataTemplate>
                                         </ListView.ItemTemplate>
@@ -194,8 +194,42 @@
                                                     Margin="5 0 5 0" />
                                         <SymbolIcon Symbol="Pictures"
                                                     Margin="5 0 5 0" />
-                                        <SymbolIcon Symbol="Emoji"
-                                                    Margin="5 0 5 0" />
+                                        <Button Style="{StaticResource IconButton}"
+                                                Content="&#xE170;"
+                                                Padding="0"
+                                                Width="50"
+                                                Height="50"      
+                                                FontSize="22"
+                                                FontWeight="Normal"
+                                                FlowDirection="LeftToRight"
+                                                Margin="5 0 5 0">
+
+                                            <Button.Flyout>
+                                                <Flyout>
+                                                    <GridView ItemsSource="{Binding Stickies}"
+                                                              x:Name="StickiesGrid"                                                        
+                                                              MaxHeight="300"
+                                                              MaxWidth="300">
+                                                        <interactivity:Interaction.Behaviors>
+                                                            <core:EventTriggerBehavior EventName="SelectionChanged">
+                                                                <core:EventTriggerBehavior.Actions>
+                                                                    <core:InvokeCommandAction Command="{Binding SickySelectedCommand}"
+                                                                                              CommandParameter="{Binding SelectedItem,ElementName=StickiesGrid}" />
+                                                                </core:EventTriggerBehavior.Actions>
+                                                            </core:EventTriggerBehavior>
+                                                        </interactivity:Interaction.Behaviors>
+                                                        <GridView.ItemTemplate>
+                                                            <DataTemplate>
+                                                                <Image Source="{Binding FilePath}"
+                                                                       Margin="0"
+                                                                       Width="50"
+                                                                       Height="50" />
+                                                            </DataTemplate>
+                                                        </GridView.ItemTemplate>
+                                                    </GridView>
+                                                </Flyout>
+                                            </Button.Flyout>
+                                        </Button>
                                     </StackPanel>
 
                                 </Grid>

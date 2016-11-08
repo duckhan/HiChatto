@@ -109,6 +109,80 @@
         <Setter Property="FontSize"
                 Value="30" />
     </Style>
+
+
+    <Style x:Key="IconButton"
+           TargetType="Button">
+        <Setter Property="Foreground"
+                Value="Black" />
+        <Setter Property="FontFamily"
+                Value="Segoe MDL2 Assets" />
+        <Setter Property="FontWeight"
+                Value="Normal" />
+        <Setter Property="HorizontalAlignment"
+                Value="Center" />
+        <Setter Property="VerticalAlignment"
+                Value="Center" />
+        <Setter Property="HorizontalContentAlignment"
+                Value="Center" />
+        <Setter Property="VerticalContentAlignment"
+                Value="Center" />
+        <Setter Property="UseSystemFocusVisuals"
+                Value="True" />
+        <Setter Property="FocusVisualMargin"
+                Value="-3" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border CornerRadius="15"
+                            BorderThickness="1"
+                            x:Name="RootButton"
+                            Padding="0">
+                        <Border.Background>
+                            <SolidColorBrush x:Name="BorderBrush"
+                                             Color="Transparent" />
+                        </Border.Background>
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal">
+                                    <Storyboard>
+                                        <PointerUpThemeAnimation Storyboard.TargetName="RootButton" />
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="PointerOver">
+                                    <Storyboard>
+
+                                        <PointerUpThemeAnimation Storyboard.TargetName="RootButton" />
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="Pressed">
+                                    <Storyboard>
+                                        <PointerUpThemeAnimation Storyboard.TargetName="RootButton" />
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="Disabled">
+                                    <Storyboard>
+                                    </Storyboard>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                        <ContentPresenter x:Name="ContentPresenter"
+                                          AutomationProperties.AccessibilityView="Raw"
+                                          BorderBrush="{TemplateBinding BorderBrush}"
+                                          BorderThickness="{TemplateBinding BorderThickness}"
+                                          ContentTemplate="{TemplateBinding ContentTemplate}"
+                                          ContentTransitions="{TemplateBinding ContentTransitions}"
+                                          Content="{TemplateBinding Content}"
+                                          HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                          Padding="{TemplateBinding Padding}"
+                                          VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+
     <ControlTemplate TargetType="Button" x:Key="ButtonTemplate">
         <Border CornerRadius="20"
                 BorderThickness="1"
@@ -183,6 +257,11 @@
                 Value="{StaticResource ButtonTemplate}">
         </Setter>
     </Style>
+
+    
+    
+    
+    
     <Style x:Name="ImageMessageStyle"
            TargetType="Image">
         <Setter Property="MaxWidth"

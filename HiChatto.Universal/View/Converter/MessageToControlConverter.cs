@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.Storage.Streams;
 using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -51,13 +52,22 @@ namespace HiChatto.Universal.View.Converter
                     g.Child = t;
                     return g;
                 case eMessageType.Image:
-                    Image img = new Image();
-                    img.Style = Application.Current.Resources["ImageMessageStyle"] as Style;
-                    img.Source = new BitmapImage(new Uri(info.Content));
-                    g.Child = img;
-                    return g;
-                case eMessageType.Stick:
-                    break;
+                    {
+                        Image img = new Image();
+                        img.Style = Application.Current.Resources["ImageMessageStyle"] as Style;
+                        img.Source = new BitmapImage(new Uri(info.Content));
+                        g.Child = img;
+                        return g;
+                    }
+                case eMessageType.Sticky:
+                    {
+                        Image img = new Image();
+                        img.Source = new BitmapImage(new Uri(info.Content));
+                        img.Width = 64;
+                        img.MaxWidth = 100;
+                        g.Child = img;
+                        return g;
+                    }
                 default:
                     break;
             }

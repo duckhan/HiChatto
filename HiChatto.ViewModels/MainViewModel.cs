@@ -8,6 +8,8 @@ using System;
 using HiChatto.ViewModels.Communicate;
 using System.Threading;
 using System.Linq;
+using System.Collections.Generic;
+
 namespace HiChatto.ViewModels
 {
     public class MainViewModel : ViewModelBase
@@ -15,6 +17,16 @@ namespace HiChatto.ViewModels
 
         #region Fields/Properties
         SynchronizationContext _context;
+
+        private List<StickyInfo> _Stickies;
+
+        public List<StickyInfo> Stickies
+        {
+            get { return _Stickies; }
+            set { _Stickies = value; }
+        }
+
+
         private bool _IsLoading = false;
         private IPackageHandler[] _handler;
         public bool IsLoading
@@ -92,19 +104,20 @@ namespace HiChatto.ViewModels
         #endregion
 
         #region Contructor
-        public MainViewModel(IMessagerSercive service,IPackageOut pkgOut,NetSource netSource,SynchronizationContext context)
+        public MainViewModel(IMessagerSercive service, IPackageOut pkgOut, NetSource netSource, SynchronizationContext context)
         {
-            this.messagerService = service;
             _context = context;
-            _handler = SimpleIoc.Default.GetInstance<IPackageHandler[]>();
             IsLoading = true;
+            this.messagerService = service;
+
+            _Stickies = LoadAllSitcky();
+            _handler = SimpleIoc.Default.GetInstance<IPackageHandler[]>();
             _UserMessages = new UserMessageCollection();
 #if DEBUG
             _UserMessages = GetSampleGroup();
 #endif
             _OnlineUsers = new UserCollection();
             _ContentVistable = false;
-
             client = netSource;
             client.Received += Client_Received;
             client.ReceiveAsync();
@@ -143,9 +156,35 @@ namespace HiChatto.ViewModels
             }
         }
 
+        public RelayCommand<StickyInfo> SickySelectedCommand
+        {
+            get { return new RelayCommand<StickyInfo>(SendStickyHandler); }
+        }
+        private void SendStickyHandler(StickyInfo stick)
+        {
+            Message mess = new Message();
+            mess.IDSender = User.UserID;
+            mess.IDReceiver = _selected.User.UserID;
+            mess.Type = eMessageType.Sticky;
+            mess.Content = stick.FilePath;
+            Out.SendTextMessage(mess);
+            _selected.Messages.Add(mess);
+        }
+
+
         #endregion
 
         #region Method
+
+        public List<StickyInfo> LoadAllSitcky()
+        {
+            List<StickyInfo> list = new List<StickyInfo>();
+            for (int i = 1; i <= 20; i++)
+            {
+                list.Add(new StickyInfo() { ID = i, FilePath = string.Format("ms-appx:///Assets/Sticky/chat{0}.png", i) });
+            }
+            return list;
+        }
 
         public void SetHandlers(IPackageHandler[] handlers)
         {
@@ -157,7 +196,7 @@ namespace HiChatto.ViewModels
             {
                 if (Handler?[e.Package.Code] != null)
                 {
-                    _context.Post((o) => Handler[e.Package.Code].Handle(this, e.Package),this);
+                    _context.Post((o) => Handler[e.Package.Code].Handle(this, e.Package), this);
                 }
             }
             catch (Exception ex)

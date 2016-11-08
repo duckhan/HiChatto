@@ -40,6 +40,7 @@
     <Compile Include="ClientConfig.cs" />
     <Compile Include="eMessageType.cs" />
     <Compile Include="MessageCollection.cs" />
+    <Compile Include="StickyInfo.cs" />
     <Compile Include="UserMessage.cs" />
     <Compile Include="UserMessageCollection.cs" />
     <Compile Include="Message.cs" />

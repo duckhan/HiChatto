@@ -6,10 +6,9 @@ using System.Threading.Tasks;
 
 namespace HiChatto.Models
 {
-    public enum eMessageType
+    public class StickyInfo
     {
-        Text,
-        Image,
-        Sticky
+        public int ID { set; get; }
+        public string FilePath { set; get; }
     }
 }
