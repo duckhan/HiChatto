@@ -1,6 +1,6 @@
 ﻿using GalaSoft.MvvmLight.Ioc;
 using GalaSoft.MvvmLight.Views;
-using HiChatto.Universal.ViewModels;
+using HiChatto.ViewModels;
 using System;
 using Windows.Networking;
 using Windows.Networking.Connectivity;

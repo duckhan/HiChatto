@@ -1,11 +1,6 @@
 ﻿using HiChatto.Base.Net;
 using HiChatto.Models;
-using HiChatto.Universal.ViewModels;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using HiChatto.ViewModels;
 
 namespace HiChatto.Universal.Net.Handler
 {

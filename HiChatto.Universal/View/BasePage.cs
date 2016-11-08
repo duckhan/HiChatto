@@ -1,4 +1,4 @@
-﻿using HiChatto.Universal.ViewModels.Communicate;
+﻿using HiChatto.ViewModels.Communicate;
 using System;
 using System.Collections.Generic;
 using System.Linq;

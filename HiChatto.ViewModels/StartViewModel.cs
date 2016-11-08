@@ -1,16 +1,14 @@
 ﻿using HiChatto.Models;
-using HiChatto.Universal.Net;
 using System;
-using System.IO;
 using System.Windows.Input;
-using Windows.Storage;
-using Newtonsoft.Json;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Ioc;
-using HiChatto.Universal.ViewModels.Communicate;
+using HiChatto.ViewModels.Communicate;
 using GalaSoft.MvvmLight.Command;
+using Windows.Storage;
+using HiChatto.Base.Net;
 
-namespace HiChatto.Universal.ViewModels
+namespace HiChatto.ViewModels
 {
     public class StartViewModel : ViewModelBase
     {
@@ -36,8 +34,8 @@ namespace HiChatto.Universal.ViewModels
         public StartViewModel(IMessagerSercive navigationService)
         {
             this.messageService = navigationService;
-            _config = SimpleIoc.Default.GetInstance<ClientConfig>();
-            LoadConfigAsync();
+            Config = SimpleIoc.Default.GetInstance<ClientConfig>();
+            //LoadConfigAsync();
             IsConnectable = _config != null && _config.ServerIP != null && _config.UserName != null;
         }
         public RelayCommand SaveConfigCommand
@@ -51,43 +49,14 @@ namespace HiChatto.Universal.ViewModels
         private void SaveConfig()
         {
             IsConnectable = _config?.ServerIP != null && _config?.UserName != null;
-            SaveConfigAsync();
+            Action<ClientConfig> save = SimpleIoc.Default.GetInstance<Action<ClientConfig>>();
+            save(_config);
 
         }
-        private async void SaveConfigAsync()
-        {
-            var local = ApplicationData.Current.LocalFolder;
-            var file =await local.CreateFileAsync("setting.json", CreationCollisionOption.ReplaceExisting);         
-            string str = JsonConvert.SerializeObject(_config);
 
-            File.WriteAllText(file.Path, str);
-        }
-        private async void LoadConfigAsync()
-        {
-            try
-            {
-                var local = ApplicationData.Current.LocalFolder; ;
-                var file = await local.GetFileAsync("setting.json");
-                if (file.IsAvailable)
-                {
-                    string str = File.ReadAllText(file.Path);
-                    ClientConfig config = JsonConvert.DeserializeObject<ClientConfig>(str);
-                    if (config != null)
-                    {
-                        _config.ServerIP = config.ServerIP;
-                        _config.ServerPort = config.ServerPort;
-                        _config.UserName = config.UserName;
-                    }
-                }
-            }
-            catch
-            {
-               
-            }
-        }
         private void Connect()
         {
-            UniversalClient c = SimpleIoc.Default.GetInstance<UniversalClient>();
+            NetSource c = SimpleIoc.Default.GetInstance<NetSource>();
             if (c == null)
             {
                 return;
@@ -99,7 +68,7 @@ namespace HiChatto.Universal.ViewModels
 
         private void Client_Connected(object sender, EventArgs e)
         {
-            if ((sender as UniversalClient).IsConnected)
+            if ((sender as NetSource).IsConnected)
             {
                 messageService.NavigateTo("MainView");
             }

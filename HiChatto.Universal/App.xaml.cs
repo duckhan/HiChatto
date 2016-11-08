@@ -18,12 +18,15 @@ using HiChatto.Universal.View;
 using HiChatto.Universal.Net;
 using GalaSoft.MvvmLight.Ioc;
 using HiChatto.Models;
-using HiChatto.Universal.ViewModels;
-using HiChatto.Universal.ViewModels.Communicate;
+using HiChatto.ViewModels;
+using HiChatto.ViewModels.Communicate;
 using GalaSoft.MvvmLight.Threading;
 using HiChatto.Base.Net;
 using System.Reflection;
 using System.Reflection.Metadata;
+using Windows.Storage;
+using Newtonsoft.Json;
+
 namespace HiChatto.Universal
 {
     /// <summary>
@@ -48,6 +51,7 @@ namespace HiChatto.Universal
             get { return pageTypes; }
         }
         private IPackageHandler[] handlers;
+        private ClientConfig _config;
         public IPackageHandler[] Handlers { get { return handlers; } }
         void LoadPackageHandlers()
         {
@@ -56,7 +60,7 @@ namespace HiChatto.Universal
             foreach (Type item in assembly.ExportedTypes)
             {
                 Type[] interfaces = item.GetInterfaces();
-                if (interfaces.Length>0 && interfaces[0] == typeof(IPackageHandler))
+                if (interfaces.Length > 0 && interfaces[0] == typeof(IPackageHandler))
                 {
                     CustomAttributeData a = item.GetTypeInfo().CustomAttributes.ToArray()?[0];
                     if (a != null)
@@ -65,6 +69,32 @@ namespace HiChatto.Universal
                         handlers[code] = (IPackageHandler)Activator.CreateInstance(item);
                     }
                 }
+            }
+        }
+        private async void SaveConfigAsync(ClientConfig _config)
+        {
+            var local = ApplicationData.Current.LocalFolder;
+            var file = await local.CreateFileAsync("setting.json", CreationCollisionOption.ReplaceExisting);
+            string str = JsonConvert.SerializeObject(_config);
+
+            File.WriteAllText(file.Path, str);
+        }
+        private async void LoadConfigAsync()
+        {
+            try
+            {
+                var local = ApplicationData.Current.LocalFolder; ;
+                var file = await local.GetFileAsync("setting.json");
+                if (file.IsAvailable)
+                {
+                    string str = File.ReadAllText(file.Path);
+                    _config = JsonConvert.DeserializeObject<ClientConfig>(str);
+                    SimpleIoc.Default.Register<ClientConfig>(() => _config);
+                }
+            }
+            catch
+            {
+                _config = new ClientConfig();
             }
         }
         void RegisterPageTypes()
@@ -81,8 +111,11 @@ namespace HiChatto.Universal
         /// <param name="e">Details about the launch request and process.</param>
         protected override void OnLaunched(LaunchActivatedEventArgs e)
         {
-            SimpleIoc.Default.Register<ClientConfig>();
-            SimpleIoc.Default.Register<UniversalClient>();
+            LoadConfigAsync();
+            SimpleIoc.Default.Register<NetSource, UniversalClient>();
+            SimpleIoc.Default.Register(() => handlers);
+            Action<ClientConfig> saveAction = SaveConfigAsync;
+            SimpleIoc.Default.Register(() => saveAction);
             DispatcherHelper.Initialize();
 #if DEBUG
             if (System.Diagnostics.Debugger.IsAttached)
@@ -91,14 +124,14 @@ namespace HiChatto.Universal
             }
 #endif
             Frame rootFrame = Window.Current.Content as Frame;
-            
+
             // Do not repeat app initialization when the Window already has content,
             // just ensure that the window is active
             if (rootFrame == null)
             {
                 // Create a Frame to act as the navigation context and navigate to the first page
                 rootFrame = new Frame();
-              
+
                 rootFrame.NavigationFailed += OnNavigationFailed;
 
                 if (e.PreviousExecutionState == ApplicationExecutionState.Terminated)
@@ -118,7 +151,7 @@ namespace HiChatto.Universal
                     // configuring the new page by passing required information as a navigation
                     // parameter
                     rootFrame.Navigate(typeof(StartView), e.Arguments);
-                   // IFrameNavigationService navigate = SimpleIoc.Default.GetInstance<IFrameNavigationService>();
+                    // IFrameNavigationService navigate = SimpleIoc.Default.GetInstance<IFrameNavigationService>();
                     //navigate.NavigateTo("StartView");
                 }
                 // Ensure the current window is active
@@ -145,8 +178,10 @@ namespace HiChatto.Universal
         /// <param name="e">Details about the suspend request.</param>
         private void OnSuspending(object sender, SuspendingEventArgs e)
         {
+            // SaveConfigAsync(_config);
             SimpleIoc.Default.Unregister<ClientConfig>();
             SimpleIoc.Default.Unregister<UniversalClient>();
+            SimpleIoc.Default.Unregister<Action<ClientConfig>>();
             var deferral = e.SuspendingOperation.GetDeferral();
             //TODO: Save application state and stop any background activity
             deferral.Complete();

@@ -94,7 +94,7 @@ namespace HiChatto.Server
         private void Client_Disconnected(object sender, EventArgs e)
         {
             var c = (Client)sender;
-            int UserId = c.User.UserID;
+            int? UserId = c.User?.UserID;
 
             _clients.Remove(c);
             Console.WriteLine("Disconnted: " + c.User.UserName);

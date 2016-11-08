@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace HiChatto.Universal.ViewModels.Communicate
+namespace HiChatto.ViewModels.Communicate
 {
     public interface IMessagerSercive : IFrameNavigationService
     {

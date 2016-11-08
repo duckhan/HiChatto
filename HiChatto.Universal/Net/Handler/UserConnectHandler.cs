@@ -1,6 +1,6 @@
 ﻿using HiChatto.Base.Net;
 using HiChatto.Models;
-using HiChatto.Universal.ViewModels;
+using HiChatto.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;

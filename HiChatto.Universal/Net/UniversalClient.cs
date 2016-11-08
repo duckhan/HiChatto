@@ -10,35 +10,31 @@ namespace HiChatto.Universal.Net
     public class UniversalClient : NetSource
     {
         Socket _socket;
-        UserInfo _user;
-        public UserInfo User
+
+        public override bool IsConnected
         {
-            get { return _user; }
+            get
+            {
+                return _socket != null && _socket.Connected;
+            }
+
             set
             {
-                _user = value;
+                base.IsConnected = value;
             }
         }
-        ClientConfig _config;
-        public ClientConfig Config { get { return _config; } }
         public Socket Socket { get { return _socket; } }
-        public bool IsConnected
-        {
-
-            get { return _isConnected && _socket != null && _socket.Connected; }
-        }
-
         SocketAsyncEventArgs receiveEvent;
         public UniversalClient(ClientConfig config) : base(new byte[8096], new byte[8096])
         {
             _config = config;
-            _user = new UserInfo();
+            _User = new UserInfo();
         }
 
         private void ReceiveAsynCompleted(object sender, SocketAsyncEventArgs e)
         {
             OnRecieve(e.BytesTransferred);
-            RecieveAsync();
+            ReceiveAsync();
         }
 
         private void ConnectAsyncComplete(object sender, SocketAsyncEventArgs e)
@@ -47,7 +43,7 @@ namespace HiChatto.Universal.Net
             OnConnect();
         }
         
-        public void RecieveAsync()
+        public override void ReceiveAsync()
         {
             try
             {
@@ -130,7 +126,7 @@ namespace HiChatto.Universal.Net
                 SocketAsyncEventArgs conEv = new SocketAsyncEventArgs();
                 receiveEvent = new SocketAsyncEventArgs();
                 receiveEvent.Completed += ReceiveAsynCompleted;
-                receiveEvent.SetBuffer(_recieveBuffer, 0, _recieveBuffer.Length);
+                receiveEvent.SetBuffer(_receiveBuffer, 0, _receiveBuffer.Length);
                 conEv.RemoteEndPoint = new IPEndPoint(IPAddress.Parse(_config.ServerIP), _config.ServerPort);
                 _socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
                 conEv.Completed += ConnectAsyncComplete;
@@ -142,5 +138,6 @@ namespace HiChatto.Universal.Net
                 _isConnected = false;
             }
         }
+        
     }
 }

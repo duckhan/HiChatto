@@ -2,27 +2,28 @@
 using HiChatto.Models;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight;
-using HiChatto.Universal.Net;
 using GalaSoft.MvvmLight.Ioc;
 using System.Threading.Tasks;
 using System;
-using HiChatto.Universal.ViewModels.Communicate;
-using GalaSoft.MvvmLight.Threading;
+using HiChatto.ViewModels.Communicate;
 using System.Threading;
 using System.Linq;
-namespace HiChatto.Universal.ViewModels
+namespace HiChatto.ViewModels
 {
     public class MainViewModel : ViewModelBase
     {
+
         #region Fields/Properties
+        SynchronizationContext _context;
         private bool _IsLoading = false;
+        private IPackageHandler[] _handler;
         public bool IsLoading
         {
             get { return _IsLoading; }
             set
             {
                 _IsLoading = value;
-                DispatcherHelper.CheckBeginInvokeOnUI(() => RaisePropertyChanged("IsLoading"));
+                _context.Post(new SendOrPostCallback((o) => RaisePropertyChanged("IsLoading")), this);
             }
         }
         private UserMessageCollection _UserMessages;
@@ -64,7 +65,7 @@ namespace HiChatto.Universal.ViewModels
 
         public IPackageHandler[] Handler
         {
-            get { return ((App)App.Current).Handlers; }
+            get { return _handler; }
         }
         public UserInfo User
         {
@@ -85,15 +86,17 @@ namespace HiChatto.Universal.ViewModels
             }
         }
         private IMessagerSercive messagerService;
-        private UniversalClient client;
-        private PackagesOut Out;
+        private NetSource client;
+        private IPackageOut Out;
 
         #endregion
 
         #region Contructor
-        public MainViewModel(IMessagerSercive service)
+        public MainViewModel(IMessagerSercive service,IPackageOut pkgOut,NetSource netSource,SynchronizationContext context)
         {
             this.messagerService = service;
+            _context = context;
+            _handler = SimpleIoc.Default.GetInstance<IPackageHandler[]>();
             IsLoading = true;
             _UserMessages = new UserMessageCollection();
 #if DEBUG
@@ -102,10 +105,10 @@ namespace HiChatto.Universal.ViewModels
             _OnlineUsers = new UserCollection();
             _ContentVistable = false;
 
-            client = SimpleIoc.Default.GetInstance<UniversalClient>();
+            client = netSource;
             client.Received += Client_Received;
-            client.RecieveAsync();
-            Out = new PackagesOut(client);
+            client.ReceiveAsync();
+            Out = pkgOut;
             User.UserName = client.Config.UserName;
             Out.SendUserConnect();
             Task.Delay(2000).ContinueWith((task) =>
@@ -143,13 +146,18 @@ namespace HiChatto.Universal.ViewModels
         #endregion
 
         #region Method
+
+        public void SetHandlers(IPackageHandler[] handlers)
+        {
+            _handler = handlers;
+        }
         private void Client_Received(NetSource sender, NetSourceEventArgs e)
         {
             try
             {
                 if (Handler?[e.Package.Code] != null)
                 {
-                    DispatcherHelper.CheckBeginInvokeOnUI(() => Handler[e.Package.Code].Handle(this, e.Package));
+                    _context.Post((o) => Handler[e.Package.Code].Handle(this, e.Package),this);
                 }
             }
             catch (Exception ex)

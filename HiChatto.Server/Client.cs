@@ -17,22 +17,14 @@ namespace HiChatto.Server
     {
         Socket _socket;
         object obj = new object();
-        UserInfo _user;
-        public UserInfo User
-        {
-            get { return _user; }
-            set
-            {
-                _user = value;
-            }
-        }
+
         public Socket Socket
         {
             get { return _socket; }
         }
         public int ID
         {
-            get { return _user == null ? 0 : _user.UserID; }
+            get { return _User == null ? 0 : _User.UserID; }
             private set { }
         }
         SocketAsyncEventArgs rc_event;
@@ -40,7 +32,7 @@ namespace HiChatto.Server
         {
             ID = 0;
             rc_event = new SocketAsyncEventArgs();
-            rc_event.SetBuffer(_recieveBuffer, 0, 8096);
+            rc_event.SetBuffer(_receiveBuffer, 0, 8096);
             rc_event.Completed += ReceiveAsyncComplete;
             Received += Client_Received;
         }
@@ -54,7 +46,7 @@ namespace HiChatto.Server
         {
             if (((Socket)sender).Connected && e.SocketError == SocketError.Success && e.BytesTransferred > 0)
             {
-                lock (_recieveBuffer)
+                lock (_receiveBuffer)
                 {
                     OnRecieve(e.BytesTransferred);
                     ImpReceiveAsync(e);
@@ -69,7 +61,7 @@ namespace HiChatto.Server
         {
             if (_socket != null && _socket.Connected)
             {
-                e.SetBuffer(_recieveBuffer, 0, _recieveBuffer.Length);
+                e.SetBuffer(_receiveBuffer, 0, _receiveBuffer.Length);
                 _socket.ReceiveAsync(e);
             }
         }
@@ -80,7 +72,7 @@ namespace HiChatto.Server
             _socket = sk;
             OnConnect();
         }
-        public void ReceiveAsync()
+        public override void ReceiveAsync()
         {
             if (_socket != null)
             {

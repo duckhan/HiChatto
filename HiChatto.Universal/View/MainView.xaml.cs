@@ -2,10 +2,12 @@
 using System.Threading.Tasks;
 using GalaSoft.MvvmLight.Ioc;
 using GalaSoft.MvvmLight.Views;
-using HiChatto.Universal.ViewModels;
+using HiChatto.ViewModels;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Documents;
 using System.Threading;
+using HiChatto.Universal.Net;
+using HiChatto.Base.Net;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -27,7 +29,8 @@ namespace HiChatto.Universal.View
             }
             catch
             {
-                ViewModel = new MainViewModel(this);
+                UniversalClient c= SimpleIoc.Default.GetInstance<NetSource>() as UniversalClient;
+                ViewModel = new MainViewModel(this, new PackageOut(c),c,SynchronizationContext.Current);
                 SimpleIoc.Default.Register(() => ViewModel);
             }
             DataContext = ViewModel;

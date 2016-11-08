@@ -4,7 +4,7 @@
                 xmlns:core="using:Microsoft.Xaml.Interactions.Core"
                 xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
                 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-                xmlns:vm="using:HiChatto.Universal.ViewModels"
+                xmlns:vm="using:HiChatto.ViewModels"
                 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                 xmlns:Models="using:HiChatto.Models"
                 xmlns:behavior="using:HiChatto.Universal.View.Behaviors"
@@ -47,7 +47,7 @@
                 </VisualState>
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
-        <ProgressRing x:Name="Loading"
+        <ProgressRing x:Name="RingLoading"
                       IsActive="{Binding IsLoading,Mode=OneWay}"
                       HorizontalAlignment="Center"
                       VerticalAlignment="Center"
@@ -87,6 +87,7 @@
             </Grid>
             <Grid Grid.Row="1">
                 <SplitView x:Name="RootSplitView"
+                           Padding="0"
                            CompactPaneLength="50"
                            OpenPaneLength="200">
                     <SplitView.Pane>
@@ -107,9 +108,9 @@
                                 <ListView.ItemTemplate>
                                     <DataTemplate>
                                         <StackPanel Orientation="Horizontal"
-                                                    Margin="10">
-                                            <Grid Width="50"
-                                                  Height="50">
+                                                    Margin="0 5 ">
+                                            <Grid Width="40"
+                                                  Height="40">
                                                 <Ellipse Fill="LightBlue" />
                                                 <TextBlock FontSize="30"
                                                            HorizontalAlignment="Center"

@@ -5,7 +5,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using HiChatto.Models;
-using HiChatto.Universal.ViewModels;
+using HiChatto.ViewModels;
+
 namespace HiChatto.Universal.Net.Handler
 {
     [PackageHandler((int)ePackageType.USER_ONLINE,"User Online Handler")]

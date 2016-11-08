@@ -8,10 +8,10 @@ using System.Threading.Tasks;
 
 namespace HiChatto.Universal.Net
 {
-    public class PackagesOut
+    public class PackageOut:IPackageOut
     {
         UniversalClient client;
-        public PackagesOut(UniversalClient c)
+        public PackageOut(UniversalClient c)
         {
             client = c;
         }
