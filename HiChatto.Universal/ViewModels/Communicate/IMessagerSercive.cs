@@ -9,8 +9,6 @@ namespace HiChatto.Universal.ViewModels.Communicate
 {
     public interface IMessagerSercive : IFrameNavigationService
     {
-        void EnableLoadingProgress();
-        void DisableLoadingProgress();
         void ShowMessage(string message, string title);
         void ShowMessage(string message, string title, string buttonText, Action afterHideCallback);
         Task<bool> ShowMessage(string message, string title, string buttonConfirmText, string buttonCancelText, Action<bool> afterHideCallback);

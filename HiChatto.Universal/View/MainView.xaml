@@ -17,7 +17,6 @@
         <CollectionViewSource x:Name="OnlineUsers"
                               Source="{Binding OnlineUsers}" />
     </local:BasePage.Resources>
-
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="VisualStateGroup">
@@ -48,9 +47,18 @@
                 </VisualState>
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
+        <ProgressRing x:Name="Loading"
+                      IsActive="{Binding IsLoading,Mode=OneWay}"
+                      HorizontalAlignment="Center"
+                      VerticalAlignment="Center"
+                      Background="Transparent"
+                      Foreground="{StaticResource FlatBlueBrush}"
+                      Width="50"
+                      Height="50" />
+
         <Grid>
             <Grid.RowDefinitions>
-                <RowDefinition Height="50" />
+                <RowDefinition Height="40" />
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
             <Grid Grid.Row="0"

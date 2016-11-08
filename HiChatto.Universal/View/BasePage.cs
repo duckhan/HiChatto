@@ -17,7 +17,6 @@ namespace HiChatto.Universal.View
 {
     public class BasePage : Page, IMessagerSercive
     {
-        private ProgressRing _progress;
         static Dictionary<string, Type> pages;
         static void RegisterPage(string pageName, Type p)
         {
@@ -40,17 +39,12 @@ namespace HiChatto.Universal.View
         }
         public BasePage(string pageName)
         {
-            _progress = new ProgressRing();
-            _progress.Width =50;
-            _progress.Height =50;
-            _progress.Background = new SolidColorBrush(Colors.Blue);
-            _progress.VerticalAlignment = VerticalAlignment.Center;
-            _progress.HorizontalAlignment = HorizontalAlignment.Center;
+
             Name = pageName;
             RegisterPage(pageName, this.GetType());
         }
 
-        public BasePage(string pageName, object parametter):this(pageName)
+        public BasePage(string pageName, object parametter) : this(pageName)
         {
             Parameter = parametter;
         }
@@ -62,19 +56,6 @@ namespace HiChatto.Universal.View
             }
         }
 
-        public void EnableLoadingProgress()
-        {
-            _progress.IsActive = true;
-            _progress.IsEnabled = true;
-            _progress.Visibility = Visibility.Visible;
-        }
-
-        public void DisableLoadingProgress()
-        {
-            _progress.IsActive = false;
-            _progress.IsEnabled = false;
-            _progress.Visibility = Visibility.Collapsed;
-        }
         public object Parameter { get; private set; }
 
         public void GoBack()
@@ -90,7 +71,7 @@ namespace HiChatto.Universal.View
             if (pages.ContainsKey(pageKey))
             {
                 await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => Frame.Navigate(pages[pageKey]));
-                
+
             }
         }
 
@@ -144,7 +125,7 @@ namespace HiChatto.Universal.View
             MessageDialog dialog = new MessageDialog(error.StackTrace, title);
             dialog.Commands.Add(new UICommand() { Label = buttonText });
             IUICommand ret = null;
-            await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () => ret=await dialog.ShowAsync());
+            await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () => ret = await dialog.ShowAsync());
             afterHideCallback?.Invoke();
         }
     }

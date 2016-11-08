@@ -27,7 +27,7 @@ namespace HiChatto.Universal.View
             }
             catch
             {
-                ViewModel = new MainViewModel(this, SynchronizationContext.Current);
+                ViewModel = new MainViewModel(this);
                 SimpleIoc.Default.Register(() => ViewModel);
             }
             DataContext = ViewModel;

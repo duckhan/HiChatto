@@ -26,7 +26,10 @@ namespace HiChatto.Server.Handlers
             pkg.WriteObject(user);
             foreach (Client item in Server.Clients)
             {
-                item.Send(pkg);
+                if (item.ID != user.UserID)
+                {
+                    item.Send(pkg);
+                }
             }
             return true;
         }

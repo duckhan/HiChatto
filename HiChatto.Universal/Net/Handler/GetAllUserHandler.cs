@@ -19,8 +19,8 @@ namespace HiChatto.Universal.Net.Handler
             {
                 return false;
             }
-            int len = pkg.ReadInt();
-            for (int i = 0; i < len; i++)
+            int count = pkg.ReadInt();
+            for (int i = 0; i < count; i++)
             {
                 UserInfo user = pkg.ReadObject<UserInfo>();
                 if (user == null)

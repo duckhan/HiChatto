@@ -4,6 +4,8 @@
                     xmlns:core="using:Microsoft.Xaml.Interactions.Core"
                     xmlns:models="using:HiChatto.Models"
                     xmlns:local="using:HiChatto.Universal">
+    <SolidColorBrush x:Key="FlatBlueBrush"
+                     Color="#2196F3"/>
     <Style x:Key="TextBlockLargeFontSize"
            TargetType="TextBlock">
         <Setter Property="FontSize"

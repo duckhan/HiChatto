@@ -16,13 +16,13 @@ namespace HiChatto.Server.Handlers
             try
             {
                 Message mess = pkg.ReadObject<Message>();
-               //Client c = Server.GetClient(mess.IDReceiver);
-               // if (c == null)
-               // {
-               //     return false;
-               // }
-               // pkg.ResetOffset();
-               // c.Send(pkg);
+                Client c = Server.GetClient(mess.IDReceiver);
+                if (c == null)
+                {
+                    return false;
+                }
+                pkg.ResetOffset();
+                c.Send(pkg);
             }
             catch (Exception ex)
             {

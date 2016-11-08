@@ -7,6 +7,7 @@
         USER_CONNECT,
         TEXT_MESSAGE,
         USER_ONLINE,
+        USER_OFFINE,
         GET_ALL_USER
     }
 }

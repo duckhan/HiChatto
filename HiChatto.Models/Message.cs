@@ -12,7 +12,10 @@ namespace HiChatto.Models
     {
 
         [DataMember]
-        public int GroupID { get; set; }
+        public int IDSender { get; set; }
+
+        [DataMember]
+        public int IDReceiver { get; set; }
 
         [DataMember]
         public string Content { get; set; }

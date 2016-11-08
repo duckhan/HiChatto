@@ -44,7 +44,12 @@ namespace HiChatto.Models
 
         public UserMessage()
         {
-            _user = new UserInfo();
+            _user = null;
+            _Messages = new MessageCollection();
+        }
+        public UserMessage(UserInfo user)
+        {
+            _user = user;
             _Messages = new MessageCollection();
         }
     }

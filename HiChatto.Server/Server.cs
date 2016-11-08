@@ -63,7 +63,7 @@ namespace HiChatto.Server
                 e.Completed += AcceptAsyncComplete;
                 _listener.AcceptAsync(e);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Console.WriteLine("Exception: " + ex);
             }
@@ -79,7 +79,7 @@ namespace HiChatto.Server
                 _clients.Add(c);
                 c.ReceiveAsync();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Console.WriteLine("Exception: " + ex);
             }
@@ -93,8 +93,15 @@ namespace HiChatto.Server
         private void Client_Disconnected(object sender, EventArgs e)
         {
             var c = (Client)sender;
-            Console.WriteLine("Disconnted");
+            int UserId = c.User.UserID;
+
             _clients.Remove(c);
+            Console.WriteLine("Disconnted: " + c.User.UserName);
+
+            foreach (var item in _clients)
+            {
+
+            }
         }
         protected void LoadPackageHandler()
         {

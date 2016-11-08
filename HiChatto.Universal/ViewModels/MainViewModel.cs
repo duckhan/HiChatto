@@ -9,13 +9,22 @@ using System;
 using HiChatto.Universal.ViewModels.Communicate;
 using GalaSoft.MvvmLight.Threading;
 using System.Threading;
-
+using System.Linq;
 namespace HiChatto.Universal.ViewModels
 {
     public class MainViewModel : ViewModelBase
     {
         #region Fields/Properties
-
+        private bool _IsLoading = false;
+        public bool IsLoading
+        {
+            get { return _IsLoading; }
+            set
+            {
+                _IsLoading = value;
+                DispatcherHelper.CheckBeginInvokeOnUI(() => RaisePropertyChanged("IsLoading"));
+            }
+        }
         private UserMessageCollection _UserMessages;
         public UserMessageCollection UserMessages
         {
@@ -80,20 +89,19 @@ namespace HiChatto.Universal.ViewModels
         private PackagesOut Out;
 
         #endregion
-        SynchronizationContext context;
+
         #region Contructor
-        public MainViewModel(IMessagerSercive service, SynchronizationContext context)
+        public MainViewModel(IMessagerSercive service)
         {
-            this.context = context;
             this.messagerService = service;
-            messagerService.EnableLoadingProgress();
+            IsLoading = true;
             _UserMessages = new UserMessageCollection();
 #if DEBUG
             _UserMessages = GetSampleGroup();
 #endif
             _OnlineUsers = new UserCollection();
             _ContentVistable = false;
-            
+
             client = SimpleIoc.Default.GetInstance<UniversalClient>();
             client.Received += Client_Received;
             client.RecieveAsync();
@@ -103,10 +111,7 @@ namespace HiChatto.Universal.ViewModels
             Task.Delay(2000).ContinueWith((task) =>
             {
                 Out.SendGetAllUser();
-            }).ContinueWith((t)=> 
-            {
-                context.Post((p)=> messagerService.DisableLoadingProgress(),this);
-            });
+            }).ContinueWith((t) => IsLoading = false);
         }
         #endregion
 
@@ -125,6 +130,8 @@ namespace HiChatto.Universal.ViewModels
             {
                 Message mess = new Message();
                 mess.Content = _selected.CurrentContent;
+                mess.IDReceiver = _selected.User.UserID;
+                mess.IDSender = User.UserID;
                 mess.IsReceived = false;
                 _selected.CurrentContent = "";
                 _selected.Messages.Add(mess);
@@ -154,7 +161,8 @@ namespace HiChatto.Universal.ViewModels
         {
             try
             {
-                OnlineUsers.Add(user);
+                UserMessage u = new UserMessage(user);
+                UserMessages.Add(u);
             }
             catch (Exception ex)
             {
@@ -165,7 +173,8 @@ namespace HiChatto.Universal.ViewModels
         {
             try
             {
-               // UserMessage g = _UserMessages.Single((p) => p.User == mess.GroupID);
+                UserMessage g = _UserMessages.Single(u => u.User.UserID == mess.IDSender);
+                g.AddMessage(mess);
             }
             catch (Exception ex)
             {
@@ -188,13 +197,13 @@ namespace HiChatto.Universal.ViewModels
             Message info = new Message();
             info.Content = "String message content";
             info.Type = eMessageType.Text;
-            info.GroupID = 1;
+            info.IDSender = 1;
             g.Messages.Add(info);
             info = new Message();
             info.Content = "ms-appx:///Assets/nao.jpg";
             info.Type = eMessageType.Image;
             info.IsReceived = true;
-            info.GroupID = 1;
+            info.IDSender = 1;
             g.Messages.Add(info);
             g.CurrentContent = "Current content";
             coll.Add(g);
