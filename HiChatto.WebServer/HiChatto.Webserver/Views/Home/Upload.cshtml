@@ -1,0 +1,21 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Upload</title>
+</head>
+<body>
+    <div> 
+        <form name="file_upload" method="post" action="/api/upload/"  enctype = "multipart/form-data">
+            <input type="file" name="fileupload" id="fileName" multiple/>
+            <input type="submit"/>
+        </form>
+    </div>
+</body>
+</html>

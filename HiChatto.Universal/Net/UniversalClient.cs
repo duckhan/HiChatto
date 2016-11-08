@@ -3,6 +3,8 @@ using System;
 using System.Net.Sockets;
 using System.Net;
 using HiChatto.Models;
+using System.IO;
+
 namespace HiChatto.Universal.Net
 {
     public class UniversalClient : NetSource
@@ -22,7 +24,7 @@ namespace HiChatto.Universal.Net
         public Socket Socket { get { return _socket; } }
         public bool IsConnected
         {
-           
+
             get { return _isConnected && _socket != null && _socket.Connected; }
         }
 
@@ -44,7 +46,7 @@ namespace HiChatto.Universal.Net
             _isConnected = true;
             OnConnect();
         }
-
+        
         public void RecieveAsync()
         {
             try
@@ -57,6 +59,13 @@ namespace HiChatto.Universal.Net
                 Disconnect();
             }
         }
+
+
+        void receiveFile(SocketAsyncEventArgs e, FileStream fs)
+        {
+
+        }
+
 
         protected override void SendTCP(int numBytes, Package pkg)
         {
@@ -82,7 +91,7 @@ namespace HiChatto.Universal.Net
                         e.Completed += SendAsyncCompleted;
                         _socket.SendAsync(e);
                     }
-                  
+
                 }
             }
             catch
@@ -126,7 +135,7 @@ namespace HiChatto.Universal.Net
                 _socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
                 conEv.Completed += ConnectAsyncComplete;
                 _socket.ConnectAsync(conEv);
-                
+
             }
             catch
             {
