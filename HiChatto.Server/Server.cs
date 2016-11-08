@@ -42,7 +42,8 @@ namespace HiChatto.Server
             }
             _clients = new List<Client>();
             _listener = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            _ipe = new IPEndPoint(IPAddress.Parse(_config.IP), _config.Port);
+            // _ipe = new IPEndPoint(IPAddress.Parse(_config.IP), _config.Port);
+            _ipe = new IPEndPoint(IPAddress.Any, _config.Port);
             _listener.Bind(_ipe);
             _listener.Listen(100);
             Listen();

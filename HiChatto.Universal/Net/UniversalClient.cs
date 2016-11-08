@@ -22,8 +22,10 @@ namespace HiChatto.Universal.Net
         public Socket Socket { get { return _socket; } }
         public bool IsConnected
         {
+           
             get { return _isConnected && _socket != null && _socket.Connected; }
         }
+
         SocketAsyncEventArgs receiveEvent;
         public UniversalClient(ClientConfig config) : base(new byte[8096], new byte[8096])
         {
