@@ -1,26 +1,23 @@
-﻿using System;
+﻿using HiChatto.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Windows.UI.Xaml;
 using Windows.UI.Xaml.Data;
 
-namespace HiChatto.Universal.ViewModels.Converter
+namespace HiChatto.Universal.View.Converter
 {
-    public class BoolToVisibilityConverter : IValueConverter
+    public class GridCollumnConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {
-           if (!(value is bool))
+            Message info = value as Message;
+            if (info == null)
             {
-                return Visibility.Collapsed;
+                return 0;
             }
-           if ((bool)value)
-            {
-                return Visibility.Visible;
-            }
-            return Visibility.Collapsed;
+            return info.IsReceived ? 2 : 0;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, string language)

@@ -10,21 +10,21 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Markup;
 
-namespace HiChatto.Universal.ViewModels.Converter
+namespace HiChatto.Universal.View.Converter
 {
     public class MessageToHtmlConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {
             Type t = value.GetType();
-            List<MessageInfo> obj = value as List<MessageInfo>;
+            List<Message> obj = value as List<Message>;
             if (obj == null)
             {
                 return null;
             }
             StringBuilder htmlBuilder = new StringBuilder();
             htmlBuilder.Append("<div width=\"100%\">");
-            foreach (MessageInfo item in obj)
+            foreach (Message item in obj)
             {
                 string p = string.Format("<div style=\"background:{0};text-align:{1}\">{2}</div>", item.IsReceived ? "#3498db" : "#2ecc71", item.IsReceived ? "left" : "right", item.Content);
                 htmlBuilder.Append(p);

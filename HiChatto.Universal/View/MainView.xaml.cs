@@ -44,6 +44,11 @@ namespace HiChatto.Universal.View
                     
             }
         }
+
+        private void HambergerButton_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        {
+            RootSplitView.IsPaneOpen = !RootSplitView.IsPaneOpen;
+        }
     }
 
 }

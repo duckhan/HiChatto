@@ -2,40 +2,43 @@
 using HiChatto.Models;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight;
-using Windows.UI.Xaml;
-using GalaSoft.MvvmLight.Views;
 using HiChatto.Universal.Net;
 using GalaSoft.MvvmLight.Ioc;
-using System.Collections.ObjectModel;
 using System.Threading.Tasks;
-using System.Linq;
 using System;
 using HiChatto.Universal.ViewModels.Communicate;
+using GalaSoft.MvvmLight.Threading;
 
 namespace HiChatto.Universal.ViewModels
 {
     public class MainViewModel : ViewModelBase
     {
         #region Fields/Properties
-        private ObservableCollection<GroupMessage> groups;
-        public ObservableCollection<GroupMessage> Groups
+
+        private UserMessageCollection _UserMessages;
+        public UserMessageCollection UserMessages
         {
-            get { return groups; }
+            get { return _UserMessages; }
             set
             {
-                Set("Groups", ref groups, value);
+                Set("UserMessages", ref _UserMessages, value);
             }
         }
-        private GroupMessage _selectedGroup;
-        public GroupMessage SelectedGroup
+        private UserMessage _selected;
+        public string CurrentContent
         {
-            get { return _selectedGroup; }
+            get
+            {
+                return _selected?.CurrentContent;
+            }
             set
             {
-                _selectedGroup = value;
-                Set("SelectedGroup", ref _selectedGroup, value);
+                _selected.CurrentContent = value;
+                RaisePropertyChanged("CurrentContent");
             }
         }
+
+
         private UserCollection _OnlineUsers;
         public UserCollection OnlineUsers
         {
@@ -62,8 +65,8 @@ namespace HiChatto.Universal.ViewModels
                 RaisePropertyChanged("User");
             }
         }
-        private Visibility _ContentVistable;
-        public Visibility IsMessageContentVisitable
+        private bool _ContentVistable;
+        public bool IsMessageContentVisitable
         {
             get { return _ContentVistable; }
             set
@@ -80,7 +83,13 @@ namespace HiChatto.Universal.ViewModels
         #region Contructor
         public MainViewModel(IMessagerSercive service)
         {
-            _ContentVistable = Visibility.Collapsed;
+
+            _UserMessages = new UserMessageCollection();
+#if DEBUG
+            _UserMessages = GetSampleGroup();
+#endif
+            _OnlineUsers = new UserCollection();
+            _ContentVistable = false;
             this.messagerService = service;
             client = SimpleIoc.Default.GetInstance<Client>();
             client.Received += Client_Received;
@@ -96,30 +105,23 @@ namespace HiChatto.Universal.ViewModels
         #endregion
 
         #region Command
-        public RelayCommand<GroupMessage> ListViewItemSelected { get { return new RelayCommand<GroupMessage>(ItemSelectedHandle); } }
-        private void ItemSelectedHandle(GroupMessage g)
+        public RelayCommand<UserMessage> ListViewItemSelected { get { return new RelayCommand<UserMessage>(ItemSelectedHandle); } }
+        private void ItemSelectedHandle(UserMessage g)
         {
-            if (g != null)
-            {
-                if (_selectedGroup == null || _selectedGroup.GroupID != g.GroupID)
-                {
-                    _selectedGroup = g;
-                }
-            }
-            IsMessageContentVisitable = Visibility.Visible;
+            _selected = g;
+            IsMessageContentVisitable = true;
         }
         public RelayCommand SendCommand { get { return new RelayCommand(SendCommandHandle); } }
 
         private void SendCommandHandle()
         {
-            if (_selectedGroup != null)
+            if (_selected != null)
             {
-                MessageInfo mess = new MessageInfo();
-                mess.Content = SelectedGroup.CurrentContent;
+                Message mess = new Message();
+                mess.Content = _selected.CurrentContent;
                 mess.IsReceived = false;
-                _selectedGroup.Messages.Add(mess);
+                _selected.Messages.Add(mess);
                 Out.SendTextMessage(mess);
-                SelectedGroup.CurrentContent = "";
 
             }
         }
@@ -133,7 +135,7 @@ namespace HiChatto.Universal.ViewModels
             {
                 if (Handler?[e.Package.Code] != null)
                 {
-                    Handler[e.Package.Code].Handle(this, e.Package);
+                    DispatcherHelper.CheckBeginInvokeOnUI(() => Handler[e.Package.Code].Handle(this, e.Package));
                 }
             }
             catch (Exception ex)
@@ -149,24 +151,49 @@ namespace HiChatto.Universal.ViewModels
             }
             catch (Exception ex)
             {
-
                 messagerService.ShowError(ex, "Exception", "OK", null);
             }
         }
-        public void AddMessageInfo(MessageInfo mess)
+        public void AddMessageInfo(Message mess)
         {
             try
             {
-                GroupMessage g = groups.Single((p) => p.GroupID == mess.GroupID);
+               // UserMessage g = _UserMessages.Single((p) => p.User == mess.GroupID);
             }
             catch (Exception ex)
             {
-
                 messagerService.ShowError(ex, "Exception", "OK", null);
             }
         }
         #endregion
-
+        #region Sample Data
+        UserMessageCollection GetSampleGroup()
+        {
+            UserMessageCollection coll = new UserMessageCollection();
+            UserMessage g = new UserMessage();
+            UserInfo u = new UserInfo();
+            u.UserID = 1;
+            u.UserName = "DucKhan";
+            UserInfo u1 = new UserInfo();
+            u1.UserID = 2;
+            u1.UserName = "Thanh Long";
+            g.User = u1;
+            Message info = new Message();
+            info.Content = "String message content";
+            info.Type = eMessageType.Text;
+            info.GroupID = 1;
+            g.Messages.Add(info);
+            info = new Message();
+            info.Content = "ms-appx:///Assets/nao.jpg";
+            info.Type = eMessageType.Image;
+            info.IsReceived = true;
+            info.GroupID = 1;
+            g.Messages.Add(info);
+            g.CurrentContent = "Current content";
+            coll.Add(g);
+            return coll;
+        }
+        #endregion
     }
 
 }

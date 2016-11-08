@@ -7,137 +7,201 @@
                 xmlns:vm="using:HiChatto.Universal.ViewModels"
                 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                 xmlns:Models="using:HiChatto.Models"
+                xmlns:behavior="using:HiChatto.Universal.View.Behaviors"
                 x:Class="HiChatto.Universal.View.MainView"
                 d:DataContext="{d:DesignInstance Type=vm:MainViewModel}"
                 mc:Ignorable="d">
     <local:BasePage.Resources>
-        <CollectionViewSource x:Name="Groups"
-                              Source="{Binding Groups}" />
+        <CollectionViewSource x:Name="UserMessages"
+                              Source="{Binding UserMessages}" />
+        <CollectionViewSource x:Name="OnlineUsers"
+                              Source="{Binding OnlineUsers}" />
     </local:BasePage.Resources>
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <Grid x:Name="RootGrid">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"
-                                  MaxWidth="250" />
-                <ColumnDefinition Width="*" />
-            </Grid.ColumnDefinitions>
-            <Grid Grid.Column="0"
-                  x:Name="ListUserGrid">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="1*" />
-                </Grid.RowDefinitions>
-                <Grid Margin="5">
-                    <ListView x:Name="listView"
-                              ItemsSource="{Binding Source={StaticResource Groups}}"
-                              Padding="5">
-                        <interactivity:Interaction.Behaviors>
-                            <core:EventTriggerBehavior EventName="Tapped">
-                                <core:EventTriggerBehavior.Actions>
-                                    <core:InvokeCommandAction Command="{Binding ListViewSelectedCommand}"
-                                                              CommandParameter="{Binding SelectedItem, ElementName=listView}" />
-                                </core:EventTriggerBehavior.Actions>
-                            </core:EventTriggerBehavior>
-                        </interactivity:Interaction.Behaviors>
-                        <ListView.Template>
-                            <ControlTemplate>
-                                <ScrollViewer HorizontalScrollBarVisibility="Disabled"
-                                              VerticalScrollBarVisibility="Visible"
-                                              VerticalScrollMode="Enabled">
-                                    <ItemsPresenter></ItemsPresenter>
-                                </ScrollViewer>
-                            </ControlTemplate>
-                        </ListView.Template>
-                        <ListView.ItemTemplate>
-                            <DataTemplate>
-                                <StackPanel Orientation="Horizontal"
-                                            Margin="10">
-                                    <Grid Width="50"
-                                          Height="50">
-                                        <Ellipse Fill="LightBlue" />
-                                        <TextBlock FontSize="30"
-                                                   HorizontalAlignment="Center"
-                                                   VerticalAlignment="Center"
-                                                   Foreground="White"
-                                                   Text="{Binding User.UserName,Converter={StaticResource GetFirstCharConverter}}" />
-                                    </Grid>
-                                    <TextBlock Margin="10"
-                                               VerticalAlignment="Center"
-                                               Text="{Binding User.UserName}" />
-                                </StackPanel>
 
-                            </DataTemplate>
-                        </ListView.ItemTemplate>
-                    </ListView>
-                </Grid>
-            </Grid>
-            <Grid Grid.Column="1">
-                <Grid Margin="5"
-                      Visibility="{Binding IsMessageContentVisitable}">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="50" />
-                        <RowDefinition Height="*" />
-                        <RowDefinition Height="100"
-                                       MaxHeight="200" />
-                    </Grid.RowDefinitions>
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup x:Name="VisualStateGroup">
+                <VisualState x:Name="Desktop">
+                    <VisualState.Setters>
+                        <Setter Target="ListViewUser.(Control.FontSize)"
+                                Value="16" />
+                        <Setter Target="RootSplitView.(SplitView.DisplayMode)"
+                                Value="CompactInline" />
+                        <Setter Target="RootSplitView.(SplitView.IsPaneOpen)"
+                                Value="True" />
+                    </VisualState.Setters>
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="800" />
+                    </VisualState.StateTriggers>
+                </VisualState>
+                <VisualState x:Name="Mobile">
+                    <VisualState.Setters>
+                        <Setter Target="ListViewUser.(Control.FontSize)"
+                                Value="12" />
+                        <Setter Target="RootSplitView.(SplitView.IsPaneOpen)"
+                                Value="False" />
+                    </VisualState.Setters>
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="600" />
+
+                    </VisualState.StateTriggers>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="50" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <Grid Grid.Row="0"
+                  Margin="5 0 0 0">
+                <Grid>
                     <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="50" />
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
-                    <TextBlock FontSize="30"
-                               TextWrapping="Wrap"
-                               Text="{Binding User.UserName,Source={StaticResource UserMessages}}" />
-
-                    <Grid Grid.Row="1">
-                        <interactivity:Interaction.Behaviors>
-                            <core:DataTriggerBehavior Binding="{Binding Type}"
-                                                      Value="1">
-                                <core:DataTriggerBehavior.Actions>
-                                    <core:ChangePropertyAction PropertyName="ItemTemplate"
-                                                               TargetObject="{Binding ElementName=ListMessage}" 
-                                                               Value="{StaticResource ImageMessage}"/>
-                                </core:DataTriggerBehavior.Actions>
-                            </core:DataTriggerBehavior>
-                            <core:DataTriggerBehavior Binding="{Binding Type}"
-                                                      Value="0">
-                                <core:DataTriggerBehavior.Actions>
-                                    <core:ChangePropertyAction PropertyName="ItemTemplate"
-                                                               TargetObject="{Binding ElementName=ListMessage}"
-                                                               Value="{StaticResource TextMessage}" />
-                                </core:DataTriggerBehavior.Actions>
-                            </core:DataTriggerBehavior>
-                        </interactivity:Interaction.Behaviors>
-                        <ListView x:Name="ListMessage" />
-                    </Grid>                   
-                    <Grid Grid.Row="2"
-                          x:Name="SendControls">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="25" />
-                            <RowDefinition Height="*" />
-                        </Grid.RowDefinitions>
-
-                        <Grid Grid.Row="0"
-                              x:Name="Controls">
-                            <StackPanel Orientation="Horizontal">
-                                <SymbolIcon Symbol="Attach"
-                                            Margin="5 0 5 0" />
-                                <SymbolIcon Symbol="Pictures"
-                                            Margin="5 0 5 0" />
-                                <SymbolIcon Symbol="Emoji"
-                                            Margin="5 0 5 0" />
-                            </StackPanel>
-
+                    <Button Style="{StaticResource SymbolButton}"
+                            HorizontalAlignment="Left"
+                            x:Name="HambergerButton"
+                            Click="HambergerButton_Click"
+                            Content="&#xE700;" />
+                    <TextBlock x:Name="txtTitle"
+                               Grid.Column="1"
+                               FontWeight="SemiBold"
+                               FontSize="22"
+                               Text="{Binding SelectedItem.User.UserName, ElementName=ListViewUser}"
+                               Visibility="{Binding IsMessageContentVisitable,Converter={StaticResource BoolToVisibilityConverter},UpdateSourceTrigger=PropertyChanged}"
+                               VerticalAlignment="Center"
+                               HorizontalAlignment="Center" />
+                </Grid>
+            </Grid>
+            <Grid Grid.Row="1">
+                <SplitView x:Name="RootSplitView"
+                           CompactPaneLength="50"
+                           OpenPaneLength="200">
+                    <SplitView.Pane>
+                        <Grid Background="White"
+                              x:Name="ListUserGrid">
+                            <ListView x:Name="ListViewUser"
+                                      ScrollViewer.VerticalScrollBarVisibility="Auto"
+                                      ItemsSource="{Binding Source={StaticResource UserMessages}}"
+                                      Padding="5">
+                                <interactivity:Interaction.Behaviors>
+                                    <core:EventTriggerBehavior EventName="Tapped">
+                                        <core:EventTriggerBehavior.Actions>
+                                            <core:InvokeCommandAction Command="{Binding ListViewItemSelected}"
+                                                                      CommandParameter="{Binding SelectedItem, ElementName=ListViewUser}" />
+                                        </core:EventTriggerBehavior.Actions>
+                                    </core:EventTriggerBehavior>
+                                </interactivity:Interaction.Behaviors>
+                                <ListView.Template>
+                                    <ControlTemplate>
+                                        <ScrollViewer HorizontalScrollBarVisibility="Disabled"
+                                                      VerticalScrollBarVisibility="Visible"
+                                                      VerticalScrollMode="Enabled">
+                                            <ItemsPresenter></ItemsPresenter>
+                                        </ScrollViewer>
+                                    </ControlTemplate>
+                                </ListView.Template>
+                                <ListView.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal"
+                                                    Margin="10">
+                                            <Grid Width="50"
+                                                  Height="50">
+                                                <Ellipse Fill="LightBlue" />
+                                                <TextBlock FontSize="30"
+                                                           HorizontalAlignment="Center"
+                                                           VerticalAlignment="Center"
+                                                           Foreground="White"
+                                                           Text="{Binding User.UserName,Converter={StaticResource GetFirstCharConverter}}" />
+                                            </Grid>
+                                            <TextBlock Margin="10"
+                                                       VerticalAlignment="Center"
+                                                       Text="{Binding User.UserName}" />
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ListView.ItemTemplate>
+                            </ListView>
                         </Grid>
-                        <Grid Grid.Row="1">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="50" />
-                            </Grid.ColumnDefinitions>
-                            <TextBox x:Name="txtMessage"
-                                     Text="{Binding MessageToSend,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
-                                     KeyUp="txtMessage_KeyUp">
+                    </SplitView.Pane>
+                    <SplitView.Content>
+                        <Grid x:Name="grid"
+                              Margin="5"
+                              Visibility="{Binding IsMessageContentVisitable,Converter={StaticResource BoolToVisibilityConverter}}">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="100"
+                                               MaxHeight="300" />
+                            </Grid.RowDefinitions>
+                            <Grid Grid.Row="0">
 
-                            </TextBox>
-                            <Grid Grid.Column="1">
-                                <SymbolIcon Symbol="Send"
+                                <ScrollViewer>
+                                    <interactivity:Interaction.Behaviors>
+                                        <behavior:AutoScrollBehavior />
+                                    </interactivity:Interaction.Behaviors>
+                                    <ListView x:Name="ListMessage"
+                                              Width="{Binding ElementName=grid,Path=Width.Value}"
+                                              ItemsSource="{Binding Messages,Source={StaticResource UserMessages}}"
+                                              HorizontalContentAlignment="Stretch"
+                                              ScrollViewer.VerticalScrollMode="Disabled"
+                                              SelectionMode="None">
+                                       
+                                        <ListView.ItemTemplate>
+                                            <DataTemplate>
+                                                <ContentControl HorizontalAlignment="{Binding IsReceived,Converter={StaticResource BoolToHorizontalAlignmentConverter}}"
+                                                                Content="{Binding Converter={StaticResource MessageToControlConverter}}" />
+                                            </DataTemplate>
+                                        </ListView.ItemTemplate>
+                                        <ListView.ItemContainerStyle>
+                                            <Style TargetType="ListViewItem">
+                                                <Setter Property="Padding"
+                                                        Value="0" />
+                                                <Setter Property="Margin"
+                                                        Value="0" />
+                                                <Setter Property="HorizontalContentAlignment"
+                                                        Value="Stretch" />
+                                            </Style>
+                                        </ListView.ItemContainerStyle>
+                                    </ListView>
+                                </ScrollViewer>
+                            </Grid>
+                            <Grid Grid.Row="1"
+                                  x:Name="SendControls">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="25" />
+                                    <RowDefinition Height="*" />
+                                </Grid.RowDefinitions>
+                                <Grid Grid.Row="0"
+                                      x:Name="Controls">
+                                    <StackPanel Orientation="Horizontal">
+                                        <SymbolIcon Symbol="Attach"
+                                                    Margin="5 0 5 0" />
+                                        <SymbolIcon Symbol="Pictures"
+                                                    Margin="5 0 5 0" />
+                                        <SymbolIcon Symbol="Emoji"
+                                                    Margin="5 0 5 0" />
+                                    </StackPanel>
+
+                                </Grid>
+                                <Grid Grid.Row="1">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="50" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBox x:Name="txtMessage"
+                                             Text="{Binding SelectedValue.CurrentContent, ElementName=ListViewUser, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                             KeyUp="txtMessage_KeyUp">
+                                    </TextBox>
+                                    <Grid Grid.Column="1">
+                                        <Button Content="&#xE724;"
+                                                Style="{StaticResource SymbolButton}"
+                                                IsEnabled="{Binding Text,ElementName=txtMessage,Converter={StaticResource StringToBoolConverter}}"
+                                                Margin="5"
+                                                Command="{Binding SendCommand}"
+                                                Height="40"
+                                                Width="40" />
+                                        <!--<SymbolIcon Symbol="Send"
                                             Foreground="LightBlue"
                                             Width="40"
                                             Height="40"
@@ -150,13 +214,16 @@
                                             </core:EventTriggerBehavior.Actions>
                                         </core:EventTriggerBehavior>
                                     </interactivity:Interaction.Behaviors>
-
-                                </SymbolIcon>
+                                </SymbolIcon>-->
+                                    </Grid>
+                                </Grid>
                             </Grid>
                         </Grid>
-                    </Grid>
-                </Grid>
+                    </SplitView.Content>
+                </SplitView>
             </Grid>
+
+
         </Grid>
     </Grid>
 </local:BasePage>

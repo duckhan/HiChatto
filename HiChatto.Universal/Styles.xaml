@@ -4,7 +4,8 @@
                     xmlns:core="using:Microsoft.Xaml.Interactions.Core"
                     xmlns:models="using:HiChatto.Models"
                     xmlns:local="using:HiChatto.Universal">
-    <Style x:Key="TextBlockLargeFontSize" TargetType="TextBlock">
+    <Style x:Key="TextBlockLargeFontSize"
+           TargetType="TextBlock">
         <Setter Property="FontSize"
                 Value="24" />
     </Style>
@@ -13,24 +14,25 @@
         <Setter Property="FontSize"
                 Value="24" />
     </Style>
-    <Style x:Key="PrimaryLargeButtonStyle"
+      
+    <Style x:Key="BaseCustomButton"
            TargetType="Button">
-        <Setter Property="Background"
-                Value="#2196F3" />
         <Setter Property="Foreground"
                 Value="White" />
+        <Setter Property="FontFamily"
+                Value="{ThemeResource ContentControlThemeFontFamily}" />
+        <Setter Property="FontWeight"
+                Value="Normal" />
         <Setter Property="Padding"
                 Value="8,4,8,4" />
         <Setter Property="HorizontalAlignment"
                 Value="Center" />
         <Setter Property="VerticalAlignment"
                 Value="Center" />
-        <Setter Property="FontFamily"
-                Value="{ThemeResource ContentControlThemeFontFamily}" />
-        <Setter Property="FontWeight"
-                Value="Normal" />
-        <Setter Property="FontSize"
-                Value="36" />
+        <Setter Property="HorizontalContentAlignment"
+                Value="Center" />
+        <Setter Property="VerticalContentAlignment"
+                Value="Center" />
         <Setter Property="UseSystemFocusVisuals"
                 Value="True" />
         <Setter Property="FocusVisualMargin"
@@ -97,27 +99,115 @@
             </Setter.Value>
         </Setter>
     </Style>
+    <Style x:Key="PrimaryLargeButtonStyle"
+           BasedOn="{StaticResource BaseCustomButton}"
+           TargetType="Button">
+        <Setter Property="Background"
+                Value="#2196F3" />
+        <Setter Property="FontSize"
+                Value="30" />
+    </Style>
+    <ControlTemplate TargetType="Button" x:Key="ButtonTemplate">
+        <Border CornerRadius="20"
+                BorderThickness="1"
+                x:Name="RootButton"
+                Padding="0">
+            <Border.Background>
+                <SolidColorBrush x:Name="BorderBrush"
+                                 Color="#2196F3" />
+            </Border.Background>
+            <VisualStateManager.VisualStateGroups>
+                <VisualStateGroup x:Name="CommonStates">
+                    <VisualState x:Name="Normal">
+                        <Storyboard>
+                            <PointerUpThemeAnimation Storyboard.TargetName="RootButton" />
+                        </Storyboard>
+                    </VisualState>
+                    <VisualState x:Name="PointerOver">
+                        <Storyboard>
+                            <ColorAnimation Storyboard.TargetProperty="Color"
+                                            To="#1565C0"
+                                            Duration="0"
+                                            Storyboard.TargetName="BorderBrush" />
+                            <PointerUpThemeAnimation Storyboard.TargetName="RootButton" />
+                        </Storyboard>
+                    </VisualState>
+                    <VisualState x:Name="Pressed">
+                        <Storyboard>
+                            <ColorAnimation Storyboard.TargetProperty="Color"
+                                            To="#1565C0"
+                                            Duration="0"
+                                            Storyboard.TargetName="BorderBrush" />
+                            <PointerUpThemeAnimation Storyboard.TargetName="RootButton" />
+                        </Storyboard>
+                    </VisualState>
+                    <VisualState x:Name="Disabled">
+                        <Storyboard>
+                            <ColorAnimation Storyboard.TargetProperty="Color"
+                                            Duration="0"
+                                            To="#BBDEFB"
+                                            Storyboard.TargetName="BorderBrush" />
 
-    <Style x:Name="ImageMessage"
-           TargetType="ListView">
-        <Setter Property="ItemTemplate">
-            <Setter.Value>
-                <DataTemplate x:DataType="models:MessageInfo">
-                    <Image MaxHeight="300"
-                           MaxWidth="300"
-                           Source="{Binding Content}" />
-                </DataTemplate>
-            </Setter.Value>
+                        </Storyboard>
+                    </VisualState>
+                </VisualStateGroup>
+            </VisualStateManager.VisualStateGroups>
+            <ContentPresenter x:Name="ContentPresenter"
+                              AutomationProperties.AccessibilityView="Raw"
+                              BorderBrush="{TemplateBinding BorderBrush}"
+                              BorderThickness="{TemplateBinding BorderThickness}"
+                              ContentTemplate="{TemplateBinding ContentTemplate}"
+                              ContentTransitions="{TemplateBinding ContentTransitions}"
+                              Content="{TemplateBinding Content}"
+                              HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                              Padding="{TemplateBinding Padding}"
+                              VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
+        </Border>
+    </ControlTemplate>
+    <Style x:Key="SymbolButton"
+           BasedOn="{StaticResource BaseCustomButton}"
+           TargetType="Button">
+        <Setter Property="Foreground"
+                Value="White" />
+        <Setter Property="FontFamily"
+                Value="Segoe MDL2 Assets" />
+        <Setter Property="FontSize"
+                Value="20" />
+        <Setter Property="Width"
+                Value="40" />
+        <Setter Property="Height"
+                Value="40" />
+        <Setter Property="Template"
+                Value="{StaticResource ButtonTemplate}">
         </Setter>
     </Style>
-    <Style x:Name="TextMessage"
-           TargetType="ListView">
-        <Setter Property="ItemTemplate">
-            <Setter.Value>
-                <DataTemplate x:DataType="models:MessageInfo">
-                    <TextBlock Text="{Binding Content}" />
-                </DataTemplate>
-            </Setter.Value>
-        </Setter>
+    <Style x:Name="ImageMessageStyle"
+           TargetType="Image">
+        <Setter Property="MaxWidth"
+                Value="400" />
+    </Style>
+
+    <Style x:Name="BorderRecieveText" TargetType="Border">
+        <Setter Property="CornerRadius"
+                Value="15 15 15 15" />
+        <Setter Property="Background"
+                Value="#bdc3c7" />
+        <Setter Property="BorderBrush"
+                Value="#bdc3c7" />
+        <Setter Property="BorderThickness"
+                Value="1" />
+    </Style>
+    <Style x:Name="BorderSentText"
+           TargetType="Border">
+        <Setter Property="Margin"
+                Value="0 0 10 0" />
+        <Setter Property="CornerRadius"
+                Value="15 15 15 15" />
+        <Setter Property="Background"
+                Value="#3498db" />
+        <Setter Property="BorderBrush"
+                Value="#3498db" />
+        <Setter Property="BorderThickness"
+                Value="1" />
     </Style>
 </ResourceDictionary>

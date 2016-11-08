@@ -83,7 +83,7 @@ namespace HiChatto.Universal.View
         {
 
             MessageDialog dialog = new MessageDialog(message, title);
-            await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, async () => await dialog.ShowAsync());
+            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () => await dialog.ShowAsync());
         }
 
         public async void ShowMessage(string message, string title, string buttonText, Action afterHideCallback)
@@ -116,9 +116,13 @@ namespace HiChatto.Universal.View
 
         }
 
-        public void ShowError(Exception error, string title, string buttonText, Action afterHideCallback)
+        public async void ShowError(Exception error, string title, string buttonText, Action afterHideCallback)
         {
-            throw new NotImplementedException();
+            MessageDialog dialog = new MessageDialog(error.StackTrace, title);
+            dialog.Commands.Add(new UICommand() { Label = buttonText });
+            IUICommand ret = null;
+            await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () => ret=await dialog.ShowAsync());
+            afterHideCallback?.Invoke();
         }
     }
 }

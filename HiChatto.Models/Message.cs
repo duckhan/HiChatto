@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace HiChatto.Models
 {
     [DataContract(Namespace = "HiChatto.Models")]
-    public class MessageInfo
+    public class Message
     {
 
         [DataMember]
@@ -22,14 +22,13 @@ namespace HiChatto.Models
 
         [DataMember]
         public eMessageType Type { get; set; }
-
         public bool IsReceived { get; set; }
-        public MessageInfo()
+        public Message()
         {
             IsReceived = false;
             Type = eMessageType.Text;
         }
-        public MessageInfo(eMessageType type)
+        public Message(eMessageType type)
         {
             IsReceived = false;
             this.Type = type;

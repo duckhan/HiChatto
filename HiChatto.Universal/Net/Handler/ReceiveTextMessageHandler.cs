@@ -17,13 +17,13 @@ namespace HiChatto.Universal.Net.Handler
             if (sender is MainViewModel)
             {
                 pkg.ResetOffset();
-                MessageInfo obj=pkg.ReadObject<MessageInfo>();
-                if (!(obj is MessageInfo))
+                Message obj=pkg.ReadObject<Message>();
+                if (!(obj is Message))
                 {
                     return false;
                 }
                 MainViewModel vm = sender as MainViewModel;
-                MessageInfo mess = obj as MessageInfo;
+                Message mess = obj as Message;
                 mess.IsReceived = true;
                 vm.AddMessageInfo(mess);
                 return true;

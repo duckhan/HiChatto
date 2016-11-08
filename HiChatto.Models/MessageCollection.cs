@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace HiChatto.Models
 {
-    public class GroupMessageCollection : ObservableCollection<GroupMessage>
+    public class MessageCollection:ObservableCollection<Message>
     {
     }
 }
