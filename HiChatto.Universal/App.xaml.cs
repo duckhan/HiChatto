@@ -82,7 +82,7 @@ namespace HiChatto.Universal
         protected override void OnLaunched(LaunchActivatedEventArgs e)
         {
             SimpleIoc.Default.Register<ClientConfig>();
-            SimpleIoc.Default.Register<Client>();
+            SimpleIoc.Default.Register<UniversalClient>();
             DispatcherHelper.Initialize();
 #if DEBUG
             if (System.Diagnostics.Debugger.IsAttached)
@@ -146,7 +146,7 @@ namespace HiChatto.Universal
         private void OnSuspending(object sender, SuspendingEventArgs e)
         {
             SimpleIoc.Default.Unregister<ClientConfig>();
-            SimpleIoc.Default.Unregister<Client>();
+            SimpleIoc.Default.Unregister<UniversalClient>();
             var deferral = e.SuspendingOperation.GetDeferral();
             //TODO: Save application state and stop any background activity
             deferral.Complete();

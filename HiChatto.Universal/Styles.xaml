@@ -187,7 +187,8 @@
                 Value="400" />
     </Style>
 
-    <Style x:Name="BorderRecieveText" TargetType="Border">
+    <Style x:Name="BorderRecieveText"
+           TargetType="Border">
         <Setter Property="CornerRadius"
                 Value="15 15 15 15" />
         <Setter Property="Background"

@@ -15,7 +15,7 @@ namespace HiChatto.Server.Handlers
         {
             try
             {
-                MessageInfo mess = pkg.ReadObject<MessageInfo>();
+                Message mess = pkg.ReadObject<Message>();
                //Client c = Server.GetClient(mess.IDReceiver);
                // if (c == null)
                // {

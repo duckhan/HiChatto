@@ -22,14 +22,32 @@ namespace HiChatto.Universal.View.Converter
             {
                 return null;
             }
-            Border g = new Border();          
+            Border g = new Border();        
+            if (info.IsReceived)
+            {
+                g.SetBinding(Grid.MaxWidthProperty, new Binding() { ElementName = "LeftReferenceBorder", Path = new PropertyPath("ActualWidth") });
+                if (info.Type == eMessageType.Text)
+                {
+                    g.Style = Application.Current.Resources["BorderRecieveText"] as Style;
+                }             
+            }
+            else
+            {
+                g.SetBinding(Grid.MaxWidthProperty, new Binding() { ElementName = "RightReferenceBorder", Path = new PropertyPath("ActualWidth") });
+
+                if (info.Type == eMessageType.Text)
+                {
+                    g.Style = Application.Current.Resources["BorderSentText"] as Style;
+                }
+            }
             switch (info.Type)
             {
                 case eMessageType.Text:
                     TextBlock t = new TextBlock();
-                    g.Style = info.IsReceived ? Application.Current.Resources["BorderRecieveText"] as Style : Application.Current.Resources["BorderSentText"] as Style;
+                    t.IsTextSelectionEnabled = true;
                     t.Text = info.Content == null ? "" : info.Content;
                     t.Padding = new Thickness(5);
+                    t.TextWrapping = TextWrapping.Wrap;
                     g.Child = t;
                     return g;
                 case eMessageType.Image:

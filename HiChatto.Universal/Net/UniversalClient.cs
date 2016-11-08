@@ -5,7 +5,7 @@ using System.Net;
 using HiChatto.Models;
 namespace HiChatto.Universal.Net
 {
-    public class Client : NetSource
+    public class UniversalClient : NetSource
     {
         Socket _socket;
         UserInfo _user;
@@ -25,7 +25,7 @@ namespace HiChatto.Universal.Net
             get { return _isConnected && _socket != null && _socket.Connected; }
         }
         SocketAsyncEventArgs receiveEvent;
-        public Client(ClientConfig config) : base(new byte[8096], new byte[8096])
+        public UniversalClient(ClientConfig config) : base(new byte[8096], new byte[8096])
         {
             _config = config;
             _user = new UserInfo();

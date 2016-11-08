@@ -57,14 +57,16 @@
                   Margin="5 0 0 0">
                 <Grid>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="50" />
+                        <ColumnDefinition Width="40" />
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
                     <Button Style="{StaticResource SymbolButton}"
                             HorizontalAlignment="Left"
                             x:Name="HambergerButton"
                             Click="HambergerButton_Click"
-                            Content="&#xE700;" />
+                            Content="&#xE700;"
+                            Width="40"
+                            Height="40" />
                     <TextBlock x:Name="txtTitle"
                                Grid.Column="1"
                                FontWeight="SemiBold"
@@ -85,7 +87,7 @@
                             <ListView x:Name="ListViewUser"
                                       ScrollViewer.VerticalScrollBarVisibility="Auto"
                                       ItemsSource="{Binding Source={StaticResource UserMessages}}"
-                                      Padding="5">
+                                      Padding="0">
                                 <interactivity:Interaction.Behaviors>
                                     <core:EventTriggerBehavior EventName="Tapped">
                                         <core:EventTriggerBehavior.Actions>
@@ -94,15 +96,6 @@
                                         </core:EventTriggerBehavior.Actions>
                                     </core:EventTriggerBehavior>
                                 </interactivity:Interaction.Behaviors>
-                                <ListView.Template>
-                                    <ControlTemplate>
-                                        <ScrollViewer HorizontalScrollBarVisibility="Disabled"
-                                                      VerticalScrollBarVisibility="Visible"
-                                                      VerticalScrollMode="Enabled">
-                                            <ItemsPresenter></ItemsPresenter>
-                                        </ScrollViewer>
-                                    </ControlTemplate>
-                                </ListView.Template>
                                 <ListView.ItemTemplate>
                                     <DataTemplate>
                                         <StackPanel Orientation="Horizontal"
@@ -126,7 +119,7 @@
                         </Grid>
                     </SplitView.Pane>
                     <SplitView.Content>
-                        <Grid x:Name="grid"
+                        <Grid x:Name="MainGrid"
                               Margin="5"
                               Visibility="{Binding IsMessageContentVisitable,Converter={StaticResource BoolToVisibilityConverter}}">
                             <Grid.RowDefinitions>
@@ -135,21 +128,34 @@
                                                MaxHeight="300" />
                             </Grid.RowDefinitions>
                             <Grid Grid.Row="0">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <Border Grid.ColumnSpan="3"
+                                            x:Name="LeftReferenceBorder" />
+                                    <Border Grid.Column="1"
+                                            Grid.ColumnSpan="3"
+                                            x:Name="RightReferenceBorder" />
+                                </Grid>
 
                                 <ScrollViewer>
                                     <interactivity:Interaction.Behaviors>
                                         <behavior:AutoScrollBehavior />
                                     </interactivity:Interaction.Behaviors>
                                     <ListView x:Name="ListMessage"
-                                              Width="{Binding ElementName=grid,Path=Width.Value}"
+                                              Width="{Binding Width.Value, ElementName=MainGrid}"
                                               ItemsSource="{Binding Messages,Source={StaticResource UserMessages}}"
                                               HorizontalContentAlignment="Stretch"
                                               ScrollViewer.VerticalScrollMode="Disabled"
                                               SelectionMode="None">
-                                       
                                         <ListView.ItemTemplate>
                                             <DataTemplate>
                                                 <ContentControl HorizontalAlignment="{Binding IsReceived,Converter={StaticResource BoolToHorizontalAlignmentConverter}}"
+                                                                Margin="0 0 10 0"
                                                                 Content="{Binding Converter={StaticResource MessageToControlConverter}}" />
                                             </DataTemplate>
                                         </ListView.ItemTemplate>
@@ -190,8 +196,11 @@
                                         <ColumnDefinition Width="50" />
                                     </Grid.ColumnDefinitions>
                                     <TextBox x:Name="txtMessage"
-                                             Text="{Binding SelectedValue.CurrentContent, ElementName=ListViewUser, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                             KeyUp="txtMessage_KeyUp">
+                                             AcceptsReturn="True"
+                                             ScrollViewer.VerticalScrollBarVisibility="Auto"
+                                             ScrollViewer.VerticalScrollMode="Auto"
+                                             TextWrapping="Wrap"
+                                             Text="{Binding SelectedValue.CurrentContent, ElementName=ListViewUser, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                                     </TextBox>
                                     <Grid Grid.Column="1">
                                         <Button Content="&#xE724;"

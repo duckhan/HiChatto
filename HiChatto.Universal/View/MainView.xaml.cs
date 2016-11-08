@@ -5,6 +5,7 @@ using GalaSoft.MvvmLight.Views;
 using HiChatto.Universal.ViewModels;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Documents;
+using System.Threading;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -26,7 +27,7 @@ namespace HiChatto.Universal.View
             }
             catch
             {
-                ViewModel = new MainViewModel(this);
+                ViewModel = new MainViewModel(this, SynchronizationContext.Current);
                 SimpleIoc.Default.Register(() => ViewModel);
             }
             DataContext = ViewModel;
@@ -41,7 +42,7 @@ namespace HiChatto.Universal.View
                 {
                     ViewModel.SendCommand.Execute(null);
                 }
-                    
+
             }
         }
 

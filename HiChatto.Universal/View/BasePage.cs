@@ -8,11 +8,16 @@ using Windows.ApplicationModel.Core;
 using Windows.UI.Core;
 using Windows.UI.Popups;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml;
+using Windows.UI;
+using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Navigation;
 
 namespace HiChatto.Universal.View
 {
     public class BasePage : Page, IMessagerSercive
     {
+        private ProgressRing _progress;
         static Dictionary<string, Type> pages;
         static void RegisterPage(string pageName, Type p)
         {
@@ -35,14 +40,19 @@ namespace HiChatto.Universal.View
         }
         public BasePage(string pageName)
         {
+            _progress = new ProgressRing();
+            _progress.Width =50;
+            _progress.Height =50;
+            _progress.Background = new SolidColorBrush(Colors.Blue);
+            _progress.VerticalAlignment = VerticalAlignment.Center;
+            _progress.HorizontalAlignment = HorizontalAlignment.Center;
             Name = pageName;
             RegisterPage(pageName, this.GetType());
         }
-        public BasePage(string pageName, object parametter)
+
+        public BasePage(string pageName, object parametter):this(pageName)
         {
-            Name = pageName;
             Parameter = parametter;
-            RegisterPage(pageName, this.GetType());
         }
         public string CurrentPageKey
         {
@@ -52,6 +62,19 @@ namespace HiChatto.Universal.View
             }
         }
 
+        public void EnableLoadingProgress()
+        {
+            _progress.IsActive = true;
+            _progress.IsEnabled = true;
+            _progress.Visibility = Visibility.Visible;
+        }
+
+        public void DisableLoadingProgress()
+        {
+            _progress.IsActive = false;
+            _progress.IsEnabled = false;
+            _progress.Visibility = Visibility.Collapsed;
+        }
         public object Parameter { get; private set; }
 
         public void GoBack()

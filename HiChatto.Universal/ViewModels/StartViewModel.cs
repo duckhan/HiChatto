@@ -87,7 +87,7 @@ namespace HiChatto.Universal.ViewModels
         }
         private void Connect()
         {
-            Client c = SimpleIoc.Default.GetInstance<Client>();
+            UniversalClient c = SimpleIoc.Default.GetInstance<UniversalClient>();
             if (c == null)
             {
                 return;
@@ -99,7 +99,7 @@ namespace HiChatto.Universal.ViewModels
 
         private void Client_Connected(object sender, EventArgs e)
         {
-            if ((sender as Client).IsConnected)
+            if ((sender as UniversalClient).IsConnected)
             {
                 messageService.NavigateTo("MainView");
             }

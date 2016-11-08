@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System;
 using HiChatto.Universal.ViewModels.Communicate;
 using GalaSoft.MvvmLight.Threading;
+using System.Threading;
 
 namespace HiChatto.Universal.ViewModels
 {
@@ -75,23 +76,25 @@ namespace HiChatto.Universal.ViewModels
             }
         }
         private IMessagerSercive messagerService;
-        private Client client;
+        private UniversalClient client;
         private PackagesOut Out;
 
         #endregion
-
+        SynchronizationContext context;
         #region Contructor
-        public MainViewModel(IMessagerSercive service)
+        public MainViewModel(IMessagerSercive service, SynchronizationContext context)
         {
-
+            this.context = context;
+            this.messagerService = service;
+            messagerService.EnableLoadingProgress();
             _UserMessages = new UserMessageCollection();
 #if DEBUG
             _UserMessages = GetSampleGroup();
 #endif
             _OnlineUsers = new UserCollection();
             _ContentVistable = false;
-            this.messagerService = service;
-            client = SimpleIoc.Default.GetInstance<Client>();
+            
+            client = SimpleIoc.Default.GetInstance<UniversalClient>();
             client.Received += Client_Received;
             client.RecieveAsync();
             Out = new PackagesOut(client);
@@ -100,6 +103,9 @@ namespace HiChatto.Universal.ViewModels
             Task.Delay(2000).ContinueWith((task) =>
             {
                 Out.SendGetAllUser();
+            }).ContinueWith((t)=> 
+            {
+                context.Post((p)=> messagerService.DisableLoadingProgress(),this);
             });
         }
         #endregion
@@ -120,6 +126,7 @@ namespace HiChatto.Universal.ViewModels
                 Message mess = new Message();
                 mess.Content = _selected.CurrentContent;
                 mess.IsReceived = false;
+                _selected.CurrentContent = "";
                 _selected.Messages.Add(mess);
                 Out.SendTextMessage(mess);
 

@@ -10,8 +10,8 @@ namespace HiChatto.Universal.Net
 {
     public class PackagesOut
     {
-        Client client;
-        public PackagesOut(Client c)
+        UniversalClient client;
+        public PackagesOut(UniversalClient c)
         {
             client = c;
         }
