@@ -125,6 +125,14 @@ namespace HiChatto.Universal.Net
         {
             try
             {
+                if (_socket != null)
+                {
+                    _socket.Dispose();
+                }
+                if (receiveEvent != null)
+                {
+                    receiveEvent.Dispose();
+                }
                 SocketAsyncEventArgs conEv = new SocketAsyncEventArgs();
                 receiveEvent = new SocketAsyncEventArgs();
                 receiveEvent.Completed += ReceiveAsynCompleted;

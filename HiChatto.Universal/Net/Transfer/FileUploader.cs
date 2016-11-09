@@ -18,7 +18,7 @@ namespace HiChatto.Universal.Net.Transfer
         XmlDocument xml;
         public FileUploader()
         {
-           
+
         }
         private BackgroundTransferDelegate completed;
         public event BackgroundTransferDelegate Completed
@@ -27,30 +27,27 @@ namespace HiChatto.Universal.Net.Transfer
             remove { completed -= value; }
         }
 
-        public async void UploadAsync(string remoteUri, string file)
+        public async Task<ResponseInfo> UploadAsync(string remoteUri, string file, bool toastNotify=true)
         {
             uploader = new BackgroundUploader();
             uploader.Method = "POST";
-            StorageFile storageFile = await StorageFile.GetFileFromPathAsync(file);
-            if (storageFile != null)
+            if (xml != null && toastNotify)
             {
-                BackgroundTransferContentPart part = new BackgroundTransferContentPart("file", storageFile.Name);
-                part.SetFile(storageFile);
-                List<BackgroundTransferContentPart> parts = new List<BackgroundTransferContentPart>();
-                parts.Add(part);
-                UploadOperation operation = await uploader.CreateUploadAsync(new Uri(remoteUri), parts);
-                if (completed != null)
-                {
-                    ResponseInfo response = await GetUploadResponse(operation);
-                    completed.Invoke(this, new BackgroundTrasnferEventArgs(response));
-                }
+                uploader.SuccessToastNotification = new Windows.UI.Notifications.ToastNotification(xml);
             }
+            StorageFile storageFile = await StorageFile.GetFileFromPathAsync(file);
+            BackgroundTransferContentPart part = new BackgroundTransferContentPart("file", storageFile.Name);
+            part.SetFile(storageFile);
+            List<BackgroundTransferContentPart> parts = new List<BackgroundTransferContentPart>();
+            parts.Add(part);
+            UploadOperation operation = await uploader.CreateUploadAsync(new Uri(remoteUri), parts);
+            return await GetUploadResponse(operation);
         }
-        public async void UploadAsync(string remoteUri, string[] files)
+        public async Task<ResponseInfo> UploadAsync(string remoteUri, string[] files, bool toastNotify=true)
         {
             uploader = new BackgroundUploader();
             uploader.Method = "POST";
-            if (xml != null)
+            if (xml != null && toastNotify)
             {
                 uploader.SuccessToastNotification = new Windows.UI.Notifications.ToastNotification(xml);
             }
@@ -66,11 +63,8 @@ namespace HiChatto.Universal.Net.Transfer
                 }
             }
             UploadOperation uploadOpration = await uploader.CreateUploadAsync(new Uri(remoteUri), parts, "form-data");
-            if (completed != null)
-            {
-                ResponseInfo response = await GetUploadResponse(uploadOpration);
-                completed.Invoke(this, new BackgroundTrasnferEventArgs(response));
-            }
+            return await GetUploadResponse(uploadOpration);
+
         }
         async Task<ResponseInfo> GetUploadResponse(UploadOperation operation)
         {
@@ -94,7 +88,7 @@ namespace HiChatto.Universal.Net.Transfer
         {
             xml = new XmlDocument();
             xml.LoadXml(xmlString);
-            
+
         }
     }
 }

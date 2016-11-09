@@ -12,6 +12,8 @@ using Windows.UI.Xaml;
 using Windows.UI;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using Windows.UI.Notifications;
+using Windows.Data.Xml.Dom;
 
 namespace HiChatto.Universal.View
 {
@@ -130,6 +132,15 @@ namespace HiChatto.Universal.View
             IUICommand ret = null;
             await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () => ret = await dialog.ShowAsync());
             afterHideCallback?.Invoke();
+        }
+
+        public void PushToastNotification(string xmlTemplate)
+        {
+            var notifyManager = ToastNotificationManager.CreateToastNotifier();
+            XmlDocument xml = new XmlDocument();
+            xml.LoadXml(xmlTemplate);
+            ToastNotification toast = new ToastNotification(xml);
+            notifyManager.Show(toast);
         }
     }
 }

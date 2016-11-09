@@ -99,11 +99,12 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Net\Handler\UserOfflineHandler.cs" />
     <Compile Include="Net\Transfer\FileUploader.cs" />
     <Compile Include="Net\Handler\GetAllUserHandler.cs" />
     <Compile Include="Net\Handler\UserConnectHandler.cs" />
     <Compile Include="Net\PackageOut.cs" />
-    <Compile Include="Net\Handler\ReceiveTextMessageHandler.cs" />
+    <Compile Include="Net\Handler\ReceiveMessageHandler.cs" />
     <Compile Include="Net\Handler\UserOnlineHandler.cs" />
     <Compile Include="View\Behaviors\AutoScrollBehavior.cs" />
     <Compile Include="View\Converter\BoolToHorizontalAlignmentConverter.cs" />
@@ -126,9 +127,6 @@
     <Compile Include="View\Converter\GetFirstCharConverter.cs" />
     <Compile Include="Net\UniversalClient.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="View\SettingPage.xaml.cs">
-      <DependentUpon>SettingPage.xaml</DependentUpon>
-    </Compile>
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">
@@ -137,7 +135,8 @@
     <None Include="HiChatto.Universal_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Assets\47-512.png" />
+    <Content Include="Assets\icon.png" />
+    <Content Include="Assets\icon2.png" />
     <Content Include="Assets\NewStoreLogo.scale-100.png" />
     <Content Include="Assets\NewStoreLogo.scale-125.png" />
     <Content Include="Assets\NewStoreLogo.scale-150.png" />
@@ -223,10 +222,6 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Resources.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="View\SettingPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

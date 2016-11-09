@@ -76,6 +76,28 @@ namespace HiChatto.Universal.View
                 }
             }
         }
+
+        private async void PictureButton_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        {
+            FileOpenPicker filePicker = new FileOpenPicker();
+            filePicker.FileTypeFilter.Add(".jpg");
+            filePicker.FileTypeFilter.Add(".png");
+            filePicker.FileTypeFilter.Add(".bmp");
+            var files = await filePicker.PickMultipleFilesAsync();
+            List<string> filePaths = new List<string>();
+            if (files != null && files.Count > 0)
+            {
+                foreach (var item in files)
+                {
+                    string token = Windows.Storage.AccessCache.StorageApplicationPermissions.FutureAccessList.Add(item);
+                    filePaths.Add(item.Path);
+                }
+                if (ViewModel.SendImageCommand.CanExecute(null))
+                {
+                    ViewModel.SendImageCommand.Execute(filePaths);
+                }
+            }
+        }
     }
 
 }

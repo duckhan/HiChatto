@@ -34,6 +34,7 @@ namespace HiChatto.ViewModels
         public StartViewModel(IMessagerSercive navigationService,NetSource client)
         {
             this.client = client;
+            client.Connected += Client_Connected;
             this.messageService = navigationService;
             Config = client.Config;
             //LoadConfigAsync();
@@ -58,7 +59,6 @@ namespace HiChatto.ViewModels
         private void Connect()
         {
             client.Connect(_config);
-            client.Connected += Client_Connected;
         }
 
         private void Client_Connected(object sender, EventArgs e)

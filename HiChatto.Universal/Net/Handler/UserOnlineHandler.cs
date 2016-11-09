@@ -20,7 +20,7 @@ namespace HiChatto.Universal.Net.Handler
                 return false;
             }
             UserInfo user=pkg.ReadObject<UserInfo>();
-            vm.AddUser(user);
+            vm.AddUser(user,true);
             return true;
         }
     }

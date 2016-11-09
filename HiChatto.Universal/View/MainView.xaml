@@ -18,6 +18,7 @@
                               Source="{Binding OnlineUsers}" />
     </local:BasePage.Resources>
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="VisualStateGroup">
                 <VisualState x:Name="Desktop">
@@ -30,7 +31,7 @@
                                 Value="True" />
                     </VisualState.Setters>
                     <VisualState.StateTriggers>
-                        <AdaptiveTrigger MinWindowWidth="800" />
+                        <AdaptiveTrigger MinWindowWidth="600" />
                     </VisualState.StateTriggers>
                 </VisualState>
                 <VisualState x:Name="Mobile">
@@ -41,8 +42,7 @@
                                 Value="False" />
                     </VisualState.Setters>
                     <VisualState.StateTriggers>
-                        <AdaptiveTrigger MinWindowWidth="600" />
-
+                        <AdaptiveTrigger MinWindowWidth="0" />
                     </VisualState.StateTriggers>
                 </VisualState>
             </VisualStateGroup>
@@ -55,7 +55,10 @@
                       Foreground="{StaticResource FlatBlueBrush}"
                       Width="50"
                       Height="50" />
-
+        <MediaElement x:Name="effectSound"
+                      AutoPlay="True"
+                      Volume="0.6"
+                      Source="{Binding EffectSound}" />
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="40" />
@@ -142,12 +145,13 @@
                     </SplitView.Pane>
                     <SplitView.Content>
                         <Grid x:Name="MainGrid"
-                              Margin="10"
-                              Visibility="{Binding IsMessageContentVisitable,Converter={StaticResource BoolToVisibilityConverter}}">
+                              Margin="10">
+                            <!--Visibility="{Binding IsMessageContentVisitable,Converter={StaticResource BoolToVisibilityConverter}}"
+                              >-->
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="*" />
                                 <RowDefinition Height="100"
-                                               MaxHeight="300" />
+                                               MaxHeight="350" />
                             </Grid.RowDefinitions>
                             <Grid Grid.Row="0">
                                 <Grid>
@@ -197,7 +201,7 @@
                             <Grid Grid.Row="1"
                                   x:Name="SendControls">
                                 <Grid.RowDefinitions>
-                                    <RowDefinition Height="25" />
+                                    <RowDefinition Height="30" />
                                     <RowDefinition Height="*" />
                                 </Grid.RowDefinitions>
                                 <Grid Grid.Row="0"
@@ -212,8 +216,15 @@
                                                 FontSize="22"
                                                 FontWeight="Normal"
                                                 Content="&#xE723;"></Button>
-                                        <SymbolIcon Symbol="Pictures"
-                                                    Margin="5 0 5 0" />
+                                        <Button Style="{StaticResource IconButton}"
+                                                x:Name="PictureButton"
+                                                Click="PictureButton_Click"
+                                                Content="&#xE7C5;"
+                                                Padding="0"
+                                                Width="50"
+                                                Height="50"
+                                                FontSize="22"
+                                                FontWeight="Normal" />
                                         <Button Style="{StaticResource IconButton}"
                                                 Content="&#xE170;"
                                                 Padding="0"
@@ -225,7 +236,7 @@
                                             <Button.Flyout>
                                                 <Flyout>
                                                     <GridView ItemsSource="{Binding Stickies}"
-                                                              x:Name="StickiesGrid"                                                        
+                                                              x:Name="StickiesGrid"
                                                               MaxHeight="300"
                                                               MaxWidth="300">
                                                         <interactivity:Interaction.Behaviors>
@@ -257,7 +268,8 @@
                                         <ColumnDefinition Width="50" />
                                     </Grid.ColumnDefinitions>
                                     <TextBox x:Name="txtMessage"
-                                             AcceptsReturn="True"
+                                             AcceptsReturn="False"
+                                             KeyUp="txtMessage_KeyUp"
                                              ScrollViewer.VerticalScrollBarVisibility="Auto"
                                              ScrollViewer.VerticalScrollMode="Auto"
                                              TextWrapping="Wrap"
@@ -292,8 +304,6 @@
                     </SplitView.Content>
                 </SplitView>
             </Grid>
-
-
         </Grid>
     </Grid>
 </local:BasePage>

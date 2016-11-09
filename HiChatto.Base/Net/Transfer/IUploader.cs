@@ -9,8 +9,8 @@ namespace HiChatto.Base.Net.Transfer
     public interface IUploader
     {
         event BackgroundTransferDelegate Completed;
-        void UploadAsync(string remoteUri, string[] files);
-        void UploadAsync(string remoteUri, string file);
+        Task<ResponseInfo> UploadAsync(string remoteUri, string[] files, bool toastNotify=true);
+        Task<ResponseInfo> UploadAsync(string remoteUri, string file,bool toastNotify=true);
         void SetToastNotification(string xmlString);
     }
 }

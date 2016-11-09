@@ -25,6 +25,12 @@ namespace HiChatto.Base.Net
             }
         }
         protected ClientConfig _config;
+
+        public NetSource()
+        {
+            _User = new UserInfo();
+        }
+
         public ClientConfig Config
         {
             get { return _config; }

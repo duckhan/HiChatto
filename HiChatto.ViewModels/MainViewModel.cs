@@ -20,16 +20,29 @@ namespace HiChatto.ViewModels
         #region Fields/Properties
 
         static readonly string RemoteHost = "http://192.168.137.1:8888/api/upload/";
-        static readonly string UploadSuccessfull= "<toast><visual><binding template=\"ToastGeneric\"><text>Upload was successful.</text></binding></visual></toast>";
-
+        static readonly string TextToastNotificationPattern= "<toast><visual><binding template=\"ToastGeneric\"><text>{0}</text></binding></visual></toast>";
+        static readonly string SentSoundEffect = "ms-appx:///Assets/sound/sent.mp3";
+        static readonly string ReceivedSoundEffect = "ms-appx:///Assets/sound/received.mp3";
         IUploader _uploader;
         public void SetUploader(IUploader uploader)
         {
             _uploader = uploader;
-            _uploader.SetToastNotification(UploadSuccessfull);
-            _uploader.Completed += UploadCompleted;
+            _uploader.SetToastNotification(string.Format(TextToastNotificationPattern, "Upload was successful."));
         }
 
+        private string _EffectSound;
+        public string EffectSound
+        {
+            get
+            {
+                return _EffectSound;
+            }
+            set
+            {
+                _EffectSound = value;
+                RaisePropertyChanged("EffectSound");
+            }
+        }
 
         SynchronizationContext _context;
 
@@ -163,24 +176,21 @@ namespace HiChatto.ViewModels
                 return new RelayCommand<List<string>>(SendAttachHandle);
             }
         }
-        private void SendAttachHandle(List<string> files)
+        private async void SendAttachHandle(List<string> files)
         {
             if (_uploader != null)
             {
                 try
                 {
-                    _uploader.UploadAsync(RemoteHost, files.ToArray());
+                    ResponseInfo res = await _uploader.UploadAsync(RemoteHost, files.ToArray());
+                    UploadCompleted(res);
                 }
                 catch (Exception ex)
                 {
-
-                    throw;
+                    messagerService.ShowError(ex, "Error", "OK", null);
                 }
-
-                
             }
         }
-
 
         public RelayCommand<UserMessage> ListViewItemSelected { get { return new RelayCommand<UserMessage>(ItemSelectedHandle); } }
         private void ItemSelectedHandle(UserMessage g)
@@ -203,7 +213,25 @@ namespace HiChatto.ViewModels
                 _selected.CurrentContent = "";
                 _selected.Messages.Add(mess);
                 Out.SendTextMessage(mess);
+                EffectSound = SentSoundEffect;
+            }
+        }
 
+        public RelayCommand<List<string>> SendImageCommand
+        {
+            get { return new RelayCommand<List<string>>(SendImageHandle); }
+        }
+
+        private async void SendImageHandle(List<string> imgs)
+        {
+            try
+            {
+                var res = await _uploader.UploadAsync(RemoteHost, imgs.ToArray(),false);
+                UploadImageCompleted(res);
+            }
+            catch (Exception ex)
+            {
+                messagerService.ShowError(ex, "Exception", "OK", null);
             }
         }
 
@@ -213,16 +241,22 @@ namespace HiChatto.ViewModels
         }
         private void SendStickyHandler(StickyInfo stick)
         {
-            Message mess = new Message();
-            mess.IDSender = User.UserID;
-            mess.IDReceiver = _selected.User.UserID;
-            mess.Type = eMessageType.Sticky;
-            mess.Content = stick.FilePath;
-            Out.SendTextMessage(mess);
-            _selected.Messages.Add(mess);
+            try
+            {
+                Message mess = new Message();
+                mess.IDSender = User.UserID;
+                mess.IDReceiver = _selected.User.UserID;
+                mess.Type = eMessageType.Sticky;
+                mess.Content = stick.FilePath;
+                Out.SendTextMessage(mess);
+                _selected.Messages.Add(mess);
+                EffectSound = SentSoundEffect;
+            }
+            catch (Exception ex)
+            {
+                messagerService.ShowError(ex, "Exception", "OK", null);
+            }           
         }
-
-
         #endregion
 
         #region Method
@@ -255,12 +289,17 @@ namespace HiChatto.ViewModels
                 messagerService.ShowError(ex, "Exception", "OK", null);
             }
         }
-        public void AddUser(UserInfo user)
+        public void AddUser(UserInfo user,bool isNewUser=false)
         {
             try
             {
                 UserMessage u = new UserMessage(user);
                 UserMessages.Add(u);
+                if (isNewUser)
+                {
+                    string content = string.Format("{0} is online now.", u.User.UserName);
+                    messagerService.PushToastNotification(string.Format(TextToastNotificationPattern, content));
+                }
             }
             catch (Exception ex)
             {
@@ -277,6 +316,7 @@ namespace HiChatto.ViewModels
                     g.UnReadCount++;               
                 }
                 g.AddMessage(mess);
+                EffectSound = ReceivedSoundEffect;
             }
             catch (Exception ex)
             {
@@ -284,16 +324,56 @@ namespace HiChatto.ViewModels
             }
         }
 
-        private void UploadCompleted(object sender, BackgroundTrasnferEventArgs e)
+        private void UploadCompleted(ResponseInfo res)
         {
-            if (e.ResponseInfomation.StatusCode == 200)
+            try
             {
-                Message mess = new Message(eMessageType.File);
-                mess.IDSender = User.UserID;
-                mess.IDReceiver = _selected.User.UserID;
-                mess.Content = e.ResponseInfomation.Response;
-                Out.SendTextMessage(mess);
-                _selected.Messages.Add(mess);
+                if (res.StatusCode == 200)
+                {
+                    Message mess = new Message(eMessageType.File);
+                    mess.IDSender = User.UserID;
+                    mess.IDReceiver = _selected.User.UserID;
+                    mess.Content = res.Response;
+                    Out.SendTextMessage(mess);
+                    _selected.Messages.Add(mess);
+                    EffectSound = SentSoundEffect;
+                }
+                else
+                {
+                    messagerService.ShowMessage(res.Response, "Response");
+                }
+            }
+            catch (Exception ex)
+            {
+                messagerService.ShowError(ex, "Error", "OK", null);
+            }
+        }
+        private void UploadImageCompleted(ResponseInfo res)
+        {
+            try
+            {
+                if (res.StatusCode == 200)
+                {
+                    string[] imgs = res.Response.Split('\n');
+                    foreach (var item in imgs)
+                    {
+                        Message mess = new Message(eMessageType.Image);
+                        mess.IDSender = User.UserID;
+                        mess.IDReceiver = _selected.User.UserID;
+                        mess.Content = res.Response;
+                        Out.SendTextMessage(mess);
+                        _selected.Messages.Add(mess);
+                    }
+                    EffectSound = SentSoundEffect;
+                }
+                else
+                {
+                    messagerService.ShowMessage(res.Response, "Response");
+                }
+            }
+            catch (Exception ex)
+            {
+                messagerService.ShowError(ex, "Error", "OK", null);
             }
         }
         #endregion
