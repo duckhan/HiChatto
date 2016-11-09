@@ -28,7 +28,7 @@ namespace HiChatto.Universal.Net
 
         public void SendTextMessage(Message mess)
         {
-            Package pkg = new Package(ePackageType.TEXT_MESSAGE);
+            Package pkg = new Package(ePackageType.USER_MESSAGE);
             pkg.WriteObject(mess);
             client.Send(pkg);
         }

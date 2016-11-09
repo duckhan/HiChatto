@@ -4,7 +4,7 @@ using HiChatto.ViewModels;
 
 namespace HiChatto.Universal.Net.Handler
 {
-    [PackageHandler((int)ePackageType.TEXT_MESSAGE,"Receive text message handler")]
+    [PackageHandler((int)ePackageType.USER_MESSAGE,"Receive text message handler")]
     public class ReceiveTextMessageHandler : IPackageHandler
     {
         public bool Handle(object sender, Package pkg)

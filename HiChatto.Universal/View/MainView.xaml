@@ -191,20 +191,25 @@
                                 <Grid Grid.Row="0"
                                       x:Name="Controls">
                                     <StackPanel Orientation="Horizontal">
-                                        <SymbolIcon Symbol="Attach"
-                                                    Margin="5 0 5 0" />
+                                        <Button Style="{StaticResource IconButton}"
+                                                x:Name="AttachButton"
+                                                Click="AttachButton_Click"
+                                                Padding="0"
+                                                Width="50"
+                                                Height="50"
+                                                FontSize="22"
+                                                FontWeight="Normal"
+                                                Content="&#xE723;"></Button>
                                         <SymbolIcon Symbol="Pictures"
                                                     Margin="5 0 5 0" />
                                         <Button Style="{StaticResource IconButton}"
                                                 Content="&#xE170;"
                                                 Padding="0"
                                                 Width="50"
-                                                Height="50"      
+                                                Height="50"
                                                 FontSize="22"
                                                 FontWeight="Normal"
-                                                FlowDirection="LeftToRight"
-                                                Margin="5 0 5 0">
-
+                                                FlowDirection="LeftToRight">
                                             <Button.Flyout>
                                                 <Flyout>
                                                     <GridView ItemsSource="{Binding Stickies}"

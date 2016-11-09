@@ -23,14 +23,14 @@ namespace HiChatto.Universal.View.Converter
             {
                 return null;
             }
-            Border g = new Border();        
+            Border g = new Border();
             if (info.IsReceived)
             {
                 g.SetBinding(Grid.MaxWidthProperty, new Binding() { ElementName = "LeftReferenceBorder", Path = new PropertyPath("ActualWidth") });
                 if (info.Type == eMessageType.Text)
                 {
                     g.Style = Application.Current.Resources["BorderRecieveText"] as Style;
-                }             
+                }
             }
             else
             {
@@ -66,6 +66,31 @@ namespace HiChatto.Universal.View.Converter
                         img.Width = 64;
                         img.MaxWidth = 100;
                         g.Child = img;
+                        return g;
+                    }
+                case eMessageType.File:
+                    {
+                        string[] links = info.Content.Split('\n');
+                        StackPanel panel = new StackPanel();
+                        panel.Orientation = Orientation.Vertical;
+                        foreach (var item in links)
+                        {
+                            try
+                            {
+                                string[] str = item.Split('/');
+                                string fileName = str[str.Length - 1];
+                                HyperlinkButton btn = new HyperlinkButton();
+                                btn.Content = fileName;
+                                btn.NavigateUri = new Uri(item);
+                                panel.Children.Add(btn);
+                            }
+                            catch (Exception)
+                            {
+                                continue;
+                            }
+                        }
+
+                        g.Child = panel;
                         return g;
                     }
                 default:

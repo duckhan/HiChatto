@@ -63,6 +63,7 @@ namespace HiChatto.ViewModels
 
         private void Client_Connected(object sender, EventArgs e)
         {
+
             if ((sender as NetSource).IsConnected)
             {
                 messageService.NavigateTo("MainView",client);

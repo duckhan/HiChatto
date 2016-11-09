@@ -10,7 +10,9 @@ using HiChatto.Universal.Net;
 using HiChatto.Base.Net;
 using HiChatto.Models;
 using Windows.UI.Xaml.Navigation;
-
+using Windows.Storage.Pickers;
+using System.Collections.Generic;
+using HiChatto.Universal.Net.Transfer;
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
 
 namespace HiChatto.Universal.View
@@ -26,7 +28,9 @@ namespace HiChatto.Universal.View
         {
             UniversalClient client = (App.Current as App).Client;
             this.InitializeComponent();
+            FileUploader uploader = new FileUploader();
             ViewModel = new MainViewModel(this, new PackageOut(client), client, SynchronizationContext.Current);
+            ViewModel.SetUploader(uploader);
             DataContext = ViewModel;
         }
 
@@ -51,6 +55,26 @@ namespace HiChatto.Universal.View
         private void HambergerButton_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
         {
             RootSplitView.IsPaneOpen = !RootSplitView.IsPaneOpen;
+        }
+
+        private async void AttachButton_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        {
+            FileOpenPicker filePicker = new FileOpenPicker();
+            filePicker.FileTypeFilter.Add("*");
+            var files = await filePicker.PickMultipleFilesAsync();
+            List<string> filePaths = new List<string>();
+            if (files != null)
+            {
+                foreach (var item in files)
+                {
+                    string token = Windows.Storage.AccessCache.StorageApplicationPermissions.FutureAccessList.Add(item);
+                    filePaths.Add(item.Path);
+                }
+                if (ViewModel.SendAttachCommand.CanExecute(null))
+                {
+                    ViewModel.SendAttachCommand.Execute(filePaths);
+                }
+            }
         }
     }
 

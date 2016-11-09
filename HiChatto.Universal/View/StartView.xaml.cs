@@ -22,7 +22,7 @@ namespace HiChatto.Universal.View
         StartViewModel viewModel;
         public StartView() : base("StartView")
         {
-
+            
             App a = App.Current as App;
             a.Client = new UniversalClient(a.Config);
             viewModel = new StartViewModel(this,a.Client);

@@ -10,6 +10,7 @@ namespace HiChatto.Models
     {
         Text,
         Image,
-        Sticky
+        Sticky,
+        File
     }
 }

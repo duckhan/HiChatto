@@ -35,14 +35,17 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Helper.cs" />
+    <Compile Include="Net\Transfer\BackgroundTrasnferEventArgs.cs" />
     <Compile Include="Net\ePackageType.cs" />
     <Compile Include="Net\IPackageHandler.cs" />
     <Compile Include="Net\IPackageOut.cs" />
+    <Compile Include="Net\Transfer\IUploader.cs" />
     <Compile Include="Net\NetSource.cs" />
     <Compile Include="Net\NetSourceEventArgs.cs" />
     <Compile Include="Net\NetSourceEventHandler.cs" />
     <Compile Include="Net\Package.cs" />
     <Compile Include="Net\PackageHandlerAttribute.cs" />
+    <Compile Include="Net\Transfer\ResponseInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

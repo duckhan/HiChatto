@@ -99,6 +99,7 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Net\Transfer\FileUploader.cs" />
     <Compile Include="Net\Handler\GetAllUserHandler.cs" />
     <Compile Include="Net\Handler\UserConnectHandler.cs" />
     <Compile Include="Net\PackageOut.cs" />

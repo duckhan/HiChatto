@@ -9,6 +9,8 @@ using HiChatto.ViewModels.Communicate;
 using System.Threading;
 using System.Linq;
 using System.Collections.Generic;
+using System.Net.Http;
+using HiChatto.Base.Net.Transfer;
 
 namespace HiChatto.ViewModels
 {
@@ -16,6 +18,18 @@ namespace HiChatto.ViewModels
     {
 
         #region Fields/Properties
+
+        static readonly string RemoteHost = "http://localhost:8888/api/upload/";
+
+
+        IUploader _uploader;
+        public void SetUploader(IUploader uploader)
+        {
+            _uploader = uploader;
+            _uploader.Completed += UploadCompleted;
+        }
+
+
         SynchronizationContext _context;
 
         private List<StickyInfo> _Stickies;
@@ -106,6 +120,9 @@ namespace HiChatto.ViewModels
         #region Contructor
         public MainViewModel(IMessagerSercive service, IPackageOut pkgOut, NetSource netSource, SynchronizationContext context)
         {
+
+
+
             _context = context;
             IsLoading = true;
             this.messagerService = service;
@@ -140,6 +157,23 @@ namespace HiChatto.ViewModels
         #endregion
 
         #region Command
+
+        public RelayCommand<List<string>> SendAttachCommand
+        {
+            get
+            {
+                return new RelayCommand<List<string>>(SendAttachHandle);
+            }
+        }
+        private void SendAttachHandle(List<string> files)
+        {
+            if (_uploader != null)
+            {
+                _uploader.UploadAsync(RemoteHost, files.ToArray());
+            }
+        }
+
+
         public RelayCommand<UserMessage> ListViewItemSelected { get { return new RelayCommand<UserMessage>(ItemSelectedHandle); } }
         private void ItemSelectedHandle(UserMessage g)
         {
@@ -234,6 +268,19 @@ namespace HiChatto.ViewModels
             catch (Exception ex)
             {
                 messagerService.ShowError(ex, "Exception", "OK", null);
+            }
+        }
+
+        private void UploadCompleted(object sender, BackgroundTrasnferEventArgs e)
+        {
+            if (e.ResponseInfomation.StatusCode == 200)
+            {
+                Message mess = new Message(eMessageType.File);
+                mess.IDSender = User.UserID;
+                mess.IDReceiver = _selected.User.UserID;
+                mess.Content = e.ResponseInfomation.Response;
+                Out.SendTextMessage(mess);
+                _selected.Messages.Add(mess);
             }
         }
         #endregion

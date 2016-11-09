@@ -52,7 +52,7 @@
     <Compile Include="Client.cs" />
     <Compile Include="Handlers\GetAllUserHandler.cs" />
     <Compile Include="Handlers\UserConnectHandler.cs" />
-    <Compile Include="Handlers\UserSendTextMessages.cs" />
+    <Compile Include="Handlers\UserMessageHandler.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Server.cs" />
