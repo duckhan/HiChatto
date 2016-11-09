@@ -36,6 +36,18 @@ namespace HiChatto.Models
                 OnPropertyChanged("Users");
             }
         }
+
+
+        private int _unReadCount;
+        public int UnReadCount
+        {
+            get { return _unReadCount; }
+            set
+            {
+                _unReadCount = value;
+                OnPropertyChanged("UnReadCount");
+            }
+        }
         public void AddMessage(Message message)
         {
             _Messages.Add(message);

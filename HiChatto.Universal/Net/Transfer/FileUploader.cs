@@ -8,16 +8,17 @@ using HiChatto.Base.Net.Transfer;
 using Windows.Storage;
 using Windows.Storage.Streams;
 using System.IO;
+using Windows.Data.Xml.Dom;
 
 namespace HiChatto.Universal.Net.Transfer
 {
     public class FileUploader : IUploader
     {
         BackgroundUploader uploader;
+        XmlDocument xml;
         public FileUploader()
         {
-            uploader = new BackgroundUploader();
-            uploader.Method = "POST";
+           
         }
         private BackgroundTransferDelegate completed;
         public event BackgroundTransferDelegate Completed
@@ -28,6 +29,8 @@ namespace HiChatto.Universal.Net.Transfer
 
         public async void UploadAsync(string remoteUri, string file)
         {
+            uploader = new BackgroundUploader();
+            uploader.Method = "POST";
             StorageFile storageFile = await StorageFile.GetFileFromPathAsync(file);
             if (storageFile != null)
             {
@@ -45,6 +48,12 @@ namespace HiChatto.Universal.Net.Transfer
         }
         public async void UploadAsync(string remoteUri, string[] files)
         {
+            uploader = new BackgroundUploader();
+            uploader.Method = "POST";
+            if (xml != null)
+            {
+                uploader.SuccessToastNotification = new Windows.UI.Notifications.ToastNotification(xml);
+            }
             List<BackgroundTransferContentPart> parts = new List<BackgroundTransferContentPart>();
             foreach (var f in files)
             {
@@ -56,7 +65,7 @@ namespace HiChatto.Universal.Net.Transfer
                     parts.Add(part);
                 }
             }
-            UploadOperation uploadOpration = await uploader.CreateUploadAsync(new Uri("http://localhost:59045/api/upload/"), parts, "form-data");
+            UploadOperation uploadOpration = await uploader.CreateUploadAsync(new Uri(remoteUri), parts, "form-data");
             if (completed != null)
             {
                 ResponseInfo response = await GetUploadResponse(uploadOpration);
@@ -83,7 +92,9 @@ namespace HiChatto.Universal.Net.Transfer
 
         public void SetToastNotification(string xmlString)
         {
-            throw new NotImplementedException();
+            xml = new XmlDocument();
+            xml.LoadXml(xmlString);
+            
         }
     }
 }

@@ -89,7 +89,7 @@
             <Grid Grid.Row="1">
                 <SplitView x:Name="RootSplitView"
                            Padding="0"
-                           CompactPaneLength="50"
+                           CompactPaneLength="60"
                            OpenPaneLength="200">
                     <SplitView.Pane>
                         <Grid Background="White"
@@ -109,7 +109,7 @@
                                 <ListView.ItemTemplate>
                                     <DataTemplate>
                                         <StackPanel Orientation="Horizontal"
-                                                    Margin="0 5 ">
+                                                    Margin="5 5">
                                             <Grid Width="40"
                                                   Height="40">
                                                 <Ellipse Fill="LightBlue" />
@@ -118,6 +118,18 @@
                                                            VerticalAlignment="Center"
                                                            Foreground="White"
                                                            Text="{Binding User.UserName,Converter={StaticResource GetFirstCharConverter}}" />
+                                                <Grid Width="15"
+                                                      Height="15"
+                                                      Visibility="{Binding UnReadCount,Converter={StaticResource IntToVisibilityConverter}}"
+                                                      HorizontalAlignment="Right"
+                                                      VerticalAlignment="Bottom">
+                                                    <Ellipse Fill="Red" />
+                                                    <TextBlock FontSize="9"
+                                                               HorizontalAlignment="Center"
+                                                               VerticalAlignment="Center"
+                                                               Foreground="White"
+                                                               Text="{Binding UnReadCount}" />
+                                                </Grid>
                                             </Grid>
                                             <TextBlock Margin="10"
                                                        VerticalAlignment="Center"
@@ -130,7 +142,7 @@
                     </SplitView.Pane>
                     <SplitView.Content>
                         <Grid x:Name="MainGrid"
-                              Margin="5"
+                              Margin="10"
                               Visibility="{Binding IsMessageContentVisitable,Converter={StaticResource BoolToVisibilityConverter}}">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="*" />

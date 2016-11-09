@@ -7,6 +7,7 @@ using System.Net;
 using System.Net.Sockets;
 using HiChatto.Base.Net;
 using System.Reflection;
+using HiChatto.Models;
 
 namespace HiChatto.Server
 {
@@ -94,14 +95,21 @@ namespace HiChatto.Server
         private void Client_Disconnected(object sender, EventArgs e)
         {
             var c = (Client)sender;
-            int? UserId = c.User?.UserID;
+            UserInfo u = c.User;
 
             _clients.Remove(c);
-            Console.WriteLine("Disconnted: " + c.User.UserName);
+            if (u == null)
+            {
+                return;
+            }
+            Console.WriteLine("Disconnected : {0}", u.UserName);
+            //Console.WriteLine("Disconneted: {0}:{1}-{2}" + c.Config.ServerIP,c.Config.ServerPort,c.Config.UserName);
 
             foreach (var item in _clients)
             {
-
+                Package pkg = new Package(ePackageType.USER_OFFINE);
+                pkg.WriteInt(u.UserID);
+                item.Send(pkg);
             }
         }
         protected void LoadPackageHandler()

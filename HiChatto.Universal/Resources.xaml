@@ -11,4 +11,5 @@
     <converter:StringToBoolConverter x:Key="StringToBoolConverter" />
     <converter:GridCollumnConverter x:Key="GridCollumnConverter" />
     <converter:BoolToHorizontalAlignmentConverter x:Key="BoolToHorizontalAlignmentConverter" />
+    <converter:IntToVisibilityConverter x:Key="IntToVisibilityConverter" />
 </ResourceDictionary>

@@ -128,9 +128,15 @@ namespace HiChatto.Universal
         protected override void OnLaunched(LaunchActivatedEventArgs e)
         {
             LoadConfigAsync();
-            SimpleIoc.Default.Register(() => handlers);
+            if (!SimpleIoc.Default.IsRegistered<IPackageHandler[]>())
+            {
+                SimpleIoc.Default.Register(() => handlers);
+            }
             Action<ClientConfig> saveAction = SaveConfigAsync;
-            SimpleIoc.Default.Register(() => saveAction);
+           if (!SimpleIoc.Default.IsRegistered<Action<ClientConfig>>())
+            {
+                SimpleIoc.Default.Register(() => saveAction);
+            }
             DispatcherHelper.Initialize();
 #if DEBUG
             if (System.Diagnostics.Debugger.IsAttached)

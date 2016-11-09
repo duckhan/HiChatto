@@ -25,7 +25,7 @@ namespace HiChatto.Webserver.Controllers
                 Directory.CreateDirectory(root);
             }
             var provider = new MultipartFormDataStreamProvider(root);
-            string path = Request.RequestUri.Authority;
+            string path = "192.168.137.1:8888";
             var task =await Request.Content.ReadAsMultipartAsync(provider);
             StringBuilder builder = new StringBuilder();
             foreach (var item in task.FileData)

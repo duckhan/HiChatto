@@ -19,13 +19,14 @@ namespace HiChatto.ViewModels
 
         #region Fields/Properties
 
-        static readonly string RemoteHost = "http://localhost:8888/api/upload/";
-
+        static readonly string RemoteHost = "http://192.168.137.1:8888/api/upload/";
+        static readonly string UploadSuccessfull= "<toast><visual><binding template=\"ToastGeneric\"><text>Upload was successful.</text></binding></visual></toast>";
 
         IUploader _uploader;
         public void SetUploader(IUploader uploader)
         {
             _uploader = uploader;
+            _uploader.SetToastNotification(UploadSuccessfull);
             _uploader.Completed += UploadCompleted;
         }
 
@@ -120,9 +121,6 @@ namespace HiChatto.ViewModels
         #region Contructor
         public MainViewModel(IMessagerSercive service, IPackageOut pkgOut, NetSource netSource, SynchronizationContext context)
         {
-
-
-
             _context = context;
             IsLoading = true;
             this.messagerService = service;
@@ -169,7 +167,17 @@ namespace HiChatto.ViewModels
         {
             if (_uploader != null)
             {
-                _uploader.UploadAsync(RemoteHost, files.ToArray());
+                try
+                {
+                    _uploader.UploadAsync(RemoteHost, files.ToArray());
+                }
+                catch (Exception ex)
+                {
+
+                    throw;
+                }
+
+                
             }
         }
 
@@ -178,6 +186,7 @@ namespace HiChatto.ViewModels
         private void ItemSelectedHandle(UserMessage g)
         {
             _selected = g;
+            _selected.UnReadCount = 0;
             IsMessageContentVisitable = true;
         }
         public RelayCommand SendCommand { get { return new RelayCommand(SendCommandHandle); } }
@@ -263,6 +272,10 @@ namespace HiChatto.ViewModels
             try
             {
                 UserMessage g = _UserMessages.Single(u => u.User.UserID == mess.IDSender);
+                if (_selected==null || g.User.UserID != _selected.User.UserID)
+                {
+                    g.UnReadCount++;               
+                }
                 g.AddMessage(mess);
             }
             catch (Exception ex)
@@ -289,6 +302,7 @@ namespace HiChatto.ViewModels
         {
             UserMessageCollection coll = new UserMessageCollection();
             UserMessage g = new UserMessage();
+            g.UnReadCount = 4;
             UserInfo u = new UserInfo();
             u.UserID = 1;
             u.UserName = "DucKhan";

@@ -63,7 +63,7 @@ namespace HiChatto.Universal.View
             filePicker.FileTypeFilter.Add("*");
             var files = await filePicker.PickMultipleFilesAsync();
             List<string> filePaths = new List<string>();
-            if (files != null)
+            if (files != null && files.Count > 0)
             {
                 foreach (var item in files)
                 {
