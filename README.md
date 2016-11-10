@@ -1,5 +1,12 @@
 # HiChatto
 
+# Requirements
+
+## Server
+.Net framework 4.5
+
+## Client
+Windows 10 Platform include: Windows 10 PC, Windows 10 Mobile
 
 # Reference
 [Data Binding](https://msdn.microsoft.com/en-us/windows/uwp/data-binding/index)
