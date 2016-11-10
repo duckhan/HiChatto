@@ -9,7 +9,6 @@
                 xmlns:Models="using:HiChatto.Models"
                 xmlns:behavior="using:HiChatto.Universal.View.Behaviors"
                 x:Class="HiChatto.Universal.View.MainView"
-                d:DataContext="{d:DesignInstance Type=vm:MainViewModel}"
                 mc:Ignorable="d">
     <local:BasePage.Resources>
         <CollectionViewSource x:Name="UserMessages"
@@ -18,7 +17,7 @@
                               Source="{Binding OnlineUsers}" />
     </local:BasePage.Resources>
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        
+
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="VisualStateGroup">
                 <VisualState x:Name="Desktop">
@@ -54,11 +53,13 @@
                       Background="Transparent"
                       Foreground="{StaticResource FlatBlueBrush}"
                       Width="50"
-                      Height="50" />
+                      Height="50"
+                      d:IsLocked="True" />
         <MediaElement x:Name="effectSound"
                       AutoPlay="True"
                       Volume="0.6"
-                      Source="{Binding EffectSound}" />
+                      Source="{Binding EffectSound}"
+                      d:IsLocked="True" />
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="40" />
@@ -66,7 +67,7 @@
             </Grid.RowDefinitions>
             <Grid Grid.Row="0"
                   Margin="5 0 0 0">
-                <Grid>
+                <Grid d:IsLocked="True">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="50" />
                         <ColumnDefinition Width="*" />
@@ -145,13 +146,13 @@
                     </SplitView.Pane>
                     <SplitView.Content>
                         <Grid x:Name="MainGrid"
-                              Margin="10">
-                            <!--Visibility="{Binding IsMessageContentVisitable,Converter={StaticResource BoolToVisibilityConverter}}"
-                              >-->
+                              Margin="10"
+                              Visibility="{Binding IsMessageContentVisitable,Converter={StaticResource BoolToVisibilityConverter}}"
+                              >
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="*" />
                                 <RowDefinition Height="100"
-                                               MaxHeight="350" />
+                                               MaxHeight="300" />
                             </Grid.RowDefinitions>
                             <Grid Grid.Row="0">
                                 <Grid>
@@ -201,7 +202,7 @@
                             <Grid Grid.Row="1"
                                   x:Name="SendControls">
                                 <Grid.RowDefinitions>
-                                    <RowDefinition Height="30" />
+                                    <RowDefinition Height="25" />
                                     <RowDefinition Height="*" />
                                 </Grid.RowDefinitions>
                                 <Grid Grid.Row="0"
@@ -215,10 +216,9 @@
                                                 Height="50"
                                                 FontSize="22"
                                                 FontWeight="Normal"
-                                                Content="&#xE723;"></Button>
+                                                Content="&#xE723;" />
                                         <Button Style="{StaticResource IconButton}"
                                                 x:Name="PictureButton"
-                                                Click="PictureButton_Click"
                                                 Content="&#xE7C5;"
                                                 Padding="0"
                                                 Width="50"
@@ -273,8 +273,7 @@
                                              ScrollViewer.VerticalScrollBarVisibility="Auto"
                                              ScrollViewer.VerticalScrollMode="Auto"
                                              TextWrapping="Wrap"
-                                             Text="{Binding SelectedValue.CurrentContent, ElementName=ListViewUser, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-                                    </TextBox>
+                                             Text="{Binding SelectedValue.CurrentContent, ElementName=ListViewUser, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                                     <Grid Grid.Column="1">
                                         <Button Content="&#xE724;"
                                                 Style="{StaticResource SymbolButton}"
