@@ -13,6 +13,8 @@ using Windows.UI.Xaml.Navigation;
 using Windows.Storage.Pickers;
 using System.Collections.Generic;
 using HiChatto.Universal.Net.Transfer;
+using Windows.UI.Xaml.Input;
+using Windows.UI.Xaml;
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
 
 namespace HiChatto.Universal.View
@@ -40,7 +42,7 @@ namespace HiChatto.Universal.View
         }
         public MainViewModel ViewModel;
 
-        private void txtMessage_KeyUp(object sender, Windows.UI.Xaml.Input.KeyRoutedEventArgs e)
+        private void txtMessage_KeyUp(object sender, KeyRoutedEventArgs e)
         {
             if (e.Key == Windows.System.VirtualKey.Enter)
             {
@@ -52,12 +54,12 @@ namespace HiChatto.Universal.View
             }
         }
 
-        private void HambergerButton_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        private void HambergerButton_Click(object sender, RoutedEventArgs e)
         {
             RootSplitView.IsPaneOpen = !RootSplitView.IsPaneOpen;
         }
 
-        private async void AttachButton_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        private async void AttachButton_Click(object sender, RoutedEventArgs e)
         {
             FileOpenPicker filePicker = new FileOpenPicker();
             filePicker.FileTypeFilter.Add("*");
@@ -77,7 +79,7 @@ namespace HiChatto.Universal.View
             }
         }
 
-        private async void PictureButton_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        private async void PictureButton_Click(object sender, RoutedEventArgs e)
         {
             FileOpenPicker filePicker = new FileOpenPicker();
             filePicker.FileTypeFilter.Add(".jpg");

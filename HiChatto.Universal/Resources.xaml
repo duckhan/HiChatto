@@ -4,12 +4,10 @@
                     xmlns:local="using:HiChatto.Universal.View">
     <converter:GetFirstCharConverter x:Key="GetFirstCharConverter" />
     <converter:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
-    <converter:MessageToHtmlConverter x:Key="MessageToHtmlConverter" />
     <converter:NullToIntConnverter x:Key="NullToIntConnverter" />
-    <converter:UserCollectionToStringConverter x:Key="UserCollectionToStringConverter" />
     <converter:MessageToControlConverter x:Key="MessageToControlConverter" />
     <converter:StringToBoolConverter x:Key="StringToBoolConverter" />
-    <converter:GridCollumnConverter x:Key="GridCollumnConverter" />
     <converter:BoolToHorizontalAlignmentConverter x:Key="BoolToHorizontalAlignmentConverter" />
     <converter:IntToVisibilityConverter x:Key="IntToVisibilityConverter" />
+    <converter:ReverseBoolToVisibilityConverter x:Key="ReverseBoolToVisibilityConverter" />
 </ResourceDictionary>

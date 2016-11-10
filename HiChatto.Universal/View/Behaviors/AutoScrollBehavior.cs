@@ -9,6 +9,9 @@ using Windows.UI.Xaml.Controls;
 
 namespace HiChatto.Universal.View.Behaviors
 {
+    /// <summary>
+    /// Auto Scroll ScroolViewer to bottom
+    /// </summary>
     public class AutoScrollBehavior:Behavior<ScrollViewer>
     {
         private double height=0;

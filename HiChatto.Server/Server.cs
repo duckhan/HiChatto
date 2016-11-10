@@ -123,7 +123,7 @@ namespace HiChatto.Server
                 {
                     PackageHandlerAttribute a = (PackageHandlerAttribute)item.GetCustomAttribute(typeof(PackageHandlerAttribute));
                     _handlers[a.Code] = (IPackageHandler)Activator.CreateInstance(item);
-                    Console.WriteLine("Loaded {0} Handler", _handlers[a.Code].ToString());
+                    Console.WriteLine("Loaded {0}", _handlers[a.Code].ToString());
 
                 }
             }

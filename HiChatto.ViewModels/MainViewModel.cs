@@ -20,9 +20,23 @@ namespace HiChatto.ViewModels
         #region Fields/Properties
 
         static readonly string RemoteHost = "http://192.168.137.1:8888/api/upload/";
+        /// <summary>
+        /// Mẫu toast notification, dùng để push thông báo vào Action Notification
+        /// </summary>
         static readonly string TextToastNotificationPattern= "<toast><visual><binding template=\"ToastGeneric\"><text>{0}</text></binding></visual></toast>";
+
+        /// <summary>
+        /// Đường đẫn hiệu ứng âm thanh đã gửi
+        /// </summary>
         static readonly string SentSoundEffect = "ms-appx:///Assets/sound/sent.mp3";
+        /// <summary>
+        /// Đường đẫn hiệu ứng âm thanh đã nhận
+        /// </summary>
         static readonly string ReceivedSoundEffect = "ms-appx:///Assets/sound/received.mp3";
+
+        /// <summary>
+        /// FileUploader
+        /// </summary>
         IUploader _uploader;
         public void SetUploader(IUploader uploader)
         {
@@ -44,6 +58,10 @@ namespace HiChatto.ViewModels
             }
         }
 
+
+        /// <summary>
+        /// Dùng để chạy nhưng thứ ở ThreadUI, như Dialog, event PropertyChanged
+        /// </summary>
         SynchronizationContext _context;
 
         private List<StickyInfo> _Stickies;
@@ -57,6 +75,10 @@ namespace HiChatto.ViewModels
 
         private bool _IsLoading = false;
         private IPackageHandler[] _handler;
+
+        /// <summary>
+        /// Hiện/ẩn RingProgress
+        /// </summary>
         public bool IsLoading
         {
             get { return _IsLoading; }
@@ -76,6 +98,10 @@ namespace HiChatto.ViewModels
             }
         }
         private UserMessage _selected;
+
+        /// <summary>
+        /// Lưu tin nhắn hiện tại ở khung chat
+        /// </summary>
         public string CurrentContent
         {
             get
@@ -103,6 +129,10 @@ namespace HiChatto.ViewModels
             }
         }
 
+
+        /// <summary>
+        /// Danh sách các Package handler
+        /// </summary>
         public IPackageHandler[] Handler
         {
             get { return _handler; }
@@ -125,8 +155,16 @@ namespace HiChatto.ViewModels
                 Set("IsMessageContentVisitable", ref _ContentVistable, value);
             }
         }
+
+        /// <summary>
+        /// Dùng để gủi thông điệp đến View
+        /// </summary>
         private IMessagerSercive messagerService;
         private NetSource client;
+
+        /// <summary>
+        /// Dùng để gửi package đến Server
+        /// </summary>
         private IPackageOut Out;
 
         #endregion
@@ -137,7 +175,6 @@ namespace HiChatto.ViewModels
             _context = context;
             IsLoading = true;
             this.messagerService = service;
-
             _Stickies = LoadAllSitcky();
             _handler = SimpleIoc.Default.GetInstance<IPackageHandler[]>();
             _UserMessages = new UserMessageCollection();
@@ -357,12 +394,15 @@ namespace HiChatto.ViewModels
                     string[] imgs = res.Response.Split('\n');
                     foreach (var item in imgs)
                     {
-                        Message mess = new Message(eMessageType.Image);
-                        mess.IDSender = User.UserID;
-                        mess.IDReceiver = _selected.User.UserID;
-                        mess.Content = res.Response;
-                        Out.SendTextMessage(mess);
-                        _selected.Messages.Add(mess);
+                       if (!string.IsNullOrEmpty(item))
+                        {
+                            Message mess = new Message(eMessageType.Image);
+                            mess.IDSender = User.UserID;
+                            mess.IDReceiver = _selected.User.UserID;
+                            mess.Content = item;
+                            Out.SendTextMessage(mess);
+                            _selected.Messages.Add(mess);
+                        }
                     }
                     EffectSound = SentSoundEffect;
                 }

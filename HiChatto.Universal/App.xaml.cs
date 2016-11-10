@@ -26,6 +26,7 @@ using System.Reflection;
 using System.Reflection.Metadata;
 using Windows.Storage;
 using Newtonsoft.Json;
+using System.Threading.Tasks;
 
 namespace HiChatto.Universal
 {
@@ -95,7 +96,7 @@ namespace HiChatto.Universal
 
             File.WriteAllText(file.Path, str);
         }
-        private async void LoadConfigAsync()
+        private async Task LoadConfigAsync()
         {
             try
             {
@@ -125,9 +126,9 @@ namespace HiChatto.Universal
         /// will be used such as when the application is launched to open a specific file.
         /// </summary>
         /// <param name="e">Details about the launch request and process.</param>
-        protected override void OnLaunched(LaunchActivatedEventArgs e)
+        protected override async void OnLaunched(LaunchActivatedEventArgs e)
         {
-            LoadConfigAsync();
+            await LoadConfigAsync();
             if (!SimpleIoc.Default.IsRegistered<IPackageHandler[]>())
             {
                 SimpleIoc.Default.Register(() => handlers);

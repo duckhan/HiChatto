@@ -19,15 +19,15 @@ namespace HiChatto.Universal.View
     /// </summary>
     public sealed partial class StartView : BasePage
     {
-        StartViewModel viewModel;
+        public StartViewModel ViewModel;
         public StartView() : base("StartView")
         {
             
             App a = App.Current as App;
             a.Client = new UniversalClient(a.Config);
-            viewModel = new StartViewModel(this,a.Client);
+            ViewModel = new StartViewModel(this,a.Client);
             this.InitializeComponent();
-            DataContext = viewModel;
+            DataContext = ViewModel;
         }
     }
 }

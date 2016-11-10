@@ -15,7 +15,7 @@ namespace HiChatto.Universal.Net.Transfer
     public class FileUploader : IUploader
     {
         BackgroundUploader uploader;
-        XmlDocument xml;
+        XmlDocument notifyTemplate;
         public FileUploader()
         {
 
@@ -31,9 +31,9 @@ namespace HiChatto.Universal.Net.Transfer
         {
             uploader = new BackgroundUploader();
             uploader.Method = "POST";
-            if (xml != null && toastNotify)
+            if (notifyTemplate != null && toastNotify)
             {
-                uploader.SuccessToastNotification = new Windows.UI.Notifications.ToastNotification(xml);
+                uploader.SuccessToastNotification = new Windows.UI.Notifications.ToastNotification(notifyTemplate);
             }
             StorageFile storageFile = await StorageFile.GetFileFromPathAsync(file);
             BackgroundTransferContentPart part = new BackgroundTransferContentPart("file", storageFile.Name);
@@ -47,9 +47,9 @@ namespace HiChatto.Universal.Net.Transfer
         {
             uploader = new BackgroundUploader();
             uploader.Method = "POST";
-            if (xml != null && toastNotify)
+            if (notifyTemplate != null && toastNotify)
             {
-                uploader.SuccessToastNotification = new Windows.UI.Notifications.ToastNotification(xml);
+                uploader.SuccessToastNotification = new Windows.UI.Notifications.ToastNotification(notifyTemplate);
             }
             List<BackgroundTransferContentPart> parts = new List<BackgroundTransferContentPart>();
             foreach (var f in files)
@@ -82,12 +82,10 @@ namespace HiChatto.Universal.Net.Transfer
 
         }
 
-
-
         public void SetToastNotification(string xmlString)
         {
-            xml = new XmlDocument();
-            xml.LoadXml(xmlString);
+            notifyTemplate = new XmlDocument();
+            notifyTemplate.LoadXml(xmlString);
 
         }
     }

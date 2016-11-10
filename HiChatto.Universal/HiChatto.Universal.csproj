@@ -20,7 +20,7 @@
     <AppxAutoIncrementPackageRevision>True</AppxAutoIncrementPackageRevision>
     <AppxSymbolPackageEnabled>False</AppxSymbolPackageEnabled>
     <AppxBundle>Always</AppxBundle>
-    <AppxBundlePlatforms>x86</AppxBundlePlatforms>
+    <AppxBundlePlatforms>x86|arm</AppxBundlePlatforms>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
@@ -108,13 +108,11 @@
     <Compile Include="Net\Handler\UserOnlineHandler.cs" />
     <Compile Include="View\Behaviors\AutoScrollBehavior.cs" />
     <Compile Include="View\Converter\BoolToHorizontalAlignmentConverter.cs" />
-    <Compile Include="View\Converter\GridCollumnConverter.cs" />
     <Compile Include="View\Converter\IntToVisibilityConverter.cs" />
     <Compile Include="View\Converter\MessageToControlConverter.cs" />
-    <Compile Include="View\Converter\MessageToHtmlConverter.cs" />
     <Compile Include="View\Converter\NullToIntConnverter.cs" />
+    <Compile Include="View\Converter\ReverseBoolToVisibilityConverter.cs" />
     <Compile Include="View\Converter\StringToBoolConverter.cs" />
-    <Compile Include="View\Converter\UserCollectionToStringConverter.cs" />
     <Compile Include="View\BasePage.cs" />
     <Compile Include="View\MainView.xaml.cs">
       <DependentUpon>MainView.xaml</DependentUpon>

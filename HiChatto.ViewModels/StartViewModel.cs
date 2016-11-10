@@ -70,7 +70,7 @@ namespace HiChatto.ViewModels
             }
             else
             {
-                messageService.ShowMessage("Can't connect. Try again", "Error");
+                messageService.ShowMessage("Can't connect to server. Check server and try again", "Error");
             }
         }
     }
